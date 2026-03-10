@@ -1,0 +1,188 @@
+/* pages/anniversaries/anniversaries.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFECEC 50%, #FFE0E0 100%);
+  padding-bottom: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 15px 20px;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  cursor: pointer;
+}
+
+.back-icon {
+  font-size: 18px;
+  color: #5D8CAE;
+  margin-right: 4px;
+}
+
+.back-text {
+  font-size: 14px;
+  color: #5D8CAE;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #5D8CAE;
+  font-family: "思源黑体", "苹方", "冬青黑体", sans-serif;
+}
+
+.placeholder {
+  width: 60px;
+}
+
+.add-section {
+  padding: 20px 20px 10px 20px;
+}
+
+.add-btn {
+  width: 100%;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(133, 193, 220, 0.4);
+}
+
+.add-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.add-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.anniversaries-list {
+  padding: 10px 15px 0 15px;
+}
+
+.anniversary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border-left: 4px solid #85C1DC;
+}
+
+.anniversary-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.anniversary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.anniversary-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5D8CAE;
+  flex: 1;
+}
+
+.anniversary-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-btn, .delete-btn {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  color: #5D8CAE;
+  background: rgba(93, 140, 174, 0.1);
+}
+
+.delete-btn {
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.anniversary-date {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.date-label {
+  margin-right: 8px;
+  color: #85C1DC;
+}
+
+.anniversary-countdown {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #F1C27D;
+  font-weight: 500;
+}
+
+.countdown-label {
+  margin-right: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #85C1DC;
+}
+
+.empty-text {
+  font-size: 16px;
+}
+
+
+/* 响应式设计 */
+@media (max-width: 750px) {
+  .anniversary-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .anniversary-actions {
+    align-self: flex-end;
+  }
+}

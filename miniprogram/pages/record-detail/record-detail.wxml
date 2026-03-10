@@ -1,0 +1,50 @@
+<!-- pages/record-detail/record-detail.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">记录详情</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 记录内容 -->
+  <view class="record-detail">
+    <view class="record-date">
+      <text class="date-text">{{displayDate}}</text>
+      <text class="time-text">{{formatTime(record.createdAt)}}</text>
+    </view>
+
+    <view class="record-content">
+      <text class="content-text">{{record.content || '无文字内容'}}</text>
+    </view>
+
+    <!-- 图片区域 -->
+    <view wx:if="{{record.images && record.images.length > 0}}" class="record-images">
+      <block wx:for="{{record.images}}" wx:key="index">
+        <image 
+          src="{{item}}" 
+          class="detail-image" 
+          mode="aspectFit"
+          bindtap="previewImage"
+          data-images="{{record.images}}"
+          data-current="{{index}}"
+        />
+      </block>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="edit-btn" bindtap="editRecord">
+      <text class="btn-icon">✏️</text>
+      <text class="btn-text">编辑</text>
+    </button>
+    <button class="delete-btn" bindtap="deleteRecord">
+      <text class="btn-icon">🗑️</text>
+      <text class="btn-text">删除</text>
+    </button>
+  </view>
+</view>

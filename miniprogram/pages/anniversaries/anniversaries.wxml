@@ -1,0 +1,50 @@
+<!-- pages/anniversaries/anniversaries.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">纪念日列表</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 添加纪念日按钮 -->
+  <view class="add-section">
+    <button class="add-btn" bindtap="addAnniversary">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加纪念日</text>
+    </button>
+  </view>
+
+  <!-- 纪念日列表 -->
+  <view class="anniversaries-list">
+    <block wx:for="{{anniversaries}}" wx:key="id">
+      <view class="anniversary-card">
+        <view class="anniversary-header">
+          <text class="anniversary-name">{{item.name}}</text>
+          <view class="anniversary-actions">
+            <text class="edit-btn" bindtap="editAnniversary" data-anniversary="{{item}}">编辑</text>
+            <text class="delete-btn" bindtap="deleteAnniversary" data-id="{{item._id}}">删除</text>
+          </view>
+        </view>
+        
+        <view class="anniversary-date">
+          <text class="date-label">日期:</text>
+          <text class="date-value">{{item.date}}</text>
+        </view>
+        
+        <view class="anniversary-countdown">
+          <text class="countdown-label">距离:</text>
+          <text class="countdown-value">{{item.countdownText}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 无纪念日提示 -->
+    <view wx:if="{{anniversaries.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无纪念日，快去添加一个特别的日子吧～</text>
+    </view>
+  </view>
+</view>

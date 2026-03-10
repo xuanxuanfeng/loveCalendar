@@ -1,0 +1,88 @@
+<!-- pages/add-record/add-record.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">添加记录</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 日期选择 -->
+  <view class="date-section">
+    <text class="date-label">选择日期</text>
+    <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
+      <view class="date-picker">
+        <text class="selected-date">{{selectedDate}}</text>
+        <text class="picker-icon">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 内容输入 -->
+  <view class="content-section">
+    <textarea 
+      class="content-input" 
+      placeholder="记录今天的美好时光..." 
+      value="{{content}}" 
+      bindinput="onContentInput"
+      maxlength="1000"
+      auto-height="{{true}}"
+    />
+    <text class="char-count">{{content.length}}/1000</text>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="image-section">
+    <text class="image-label">添加照片</text>
+    <view class="image-upload-area">
+      <view class="upload-btn" bindtap="chooseImages" wx:if="{{images.length < 9}}">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">添加图片</text>
+      </view>
+      
+      <view class="image-grid">
+        <!-- 已上传的图片 -->
+        <block wx:for="{{uploadedImages}}" wx:key="index">
+          <view class="image-item">
+            <image
+              src="{{item}}"
+              class="uploaded-image"
+              mode="aspectFill"
+              bindtap="previewImage"
+              data-index="{{index}}"
+            />
+            <view class="remove-btn" bindtap="removeUploadedImage" data-index="{{index}}">
+              <text class="remove-icon">×</text>
+            </view>
+          </view>
+        </block>
+
+        <!-- 新选择的图片 -->
+        <block wx:for="{{images}}" wx:key="index">
+          <view class="image-item">
+            <image
+              src="{{item.url}}"
+              class="uploaded-image"
+              mode="aspectFill"
+              bindtap="previewImage"
+              data-index="{{index + uploadedImages.length}}"
+            />
+            <view class="remove-btn" bindtap="removeNewImage" data-index="{{index}}">
+              <text class="remove-icon">×</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="action-section">
+    <button class="save-btn" bindtap="saveRecord" disabled="{{isSaving}}">
+      {{isSaving ? '保存中...' : recordId ? '更新记录' : '保存记录'}}
+    </button>
+  </view>
+</view>

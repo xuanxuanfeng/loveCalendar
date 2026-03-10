@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/day-detail/day-detail",
+    "pages/add-record/add-record",
+    "pages/record-detail/record-detail",
+    "pages/anniversaries/anniversaries",
+    "pages/add-anniversary/add-anniversary",
+    "pages/couple-bind/couple-bind"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#85C1DC",
+    "navigationBarTitleText": "情侣纪念日",
+    "navigationBarTextStyle": "white"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+} 

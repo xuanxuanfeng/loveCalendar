@@ -1,0 +1,115 @@
+<!-- pages/couple-bind/couple-bind.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <text class="title">情侣绑定</text>
+    <text class="subtitle">与您的另一半建立专属连接</text>
+  </view>
+
+  <!-- 绑定状态卡片 -->
+  <view class="status-card" wx:if="{{coupleStatus.hasCouple}}">
+    <view class="status-icon">
+      <text class="icon">💕</text>
+    </view>
+    <view class="status-content">
+      <text class="status-text">已与 {{coupleStatus.partnerNickname || '对方'}} 建立情侣关系</text>
+      <text class="status-desc">享受情侣专属功能</text>
+    </view>
+    <button class="unbind-btn" bindtap="handleUnbind">解除绑定</button>
+  </view>
+
+  <!-- 绑定操作卡片 -->
+  <view class="action-card" wx:if="{{!coupleStatus.hasCouple}}">
+    <!-- 自己的 OpenID -->
+    <view class="openid-info">
+      <text class="info-label">我的 OpenID：</text>
+      <text class="openid-value" bindtap="copyOpenId">{{myOpenId}}</text>
+      <text class="copy-tip">点击复制</text>
+    </view>
+
+    <!-- 输入对方 OpenID -->
+    <view class="input-group">
+      <text class="input-label">对方 OpenID</text>
+      <input
+        class="input-field"
+        type="text"
+        placeholder="请输入对方的 OpenID"
+        value="{{partnerOpenId}}"
+        bindinput="onOpenIdInput"
+      />
+    </view>
+
+    <!-- 绑定按钮 -->
+    <button
+      class="bind-btn {{partnerOpenId ? 'active' : 'disabled'}}"
+      bindtap="handleBind"
+      disabled="{{!partnerOpenId}}"
+    >
+      发送绑定请求
+    </button>
+  </view>
+
+  <!-- 请求管理区域 -->
+  <view class="requests-section" wx:if="{{hasRequests}}">
+    <!-- 待处理请求 -->
+    <view class="section-card" wx:if="{{incomingRequests.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">待处理请求</text>
+      </view>
+      <view class="request-list">
+        <block wx:for="{{incomingRequests}}" wx:key="index">
+          <view class="request-item">
+            <view class="request-info">
+              <text class="request-text">来自 {{item.senderNickname || '用户'}} 的绑定请求</text>
+              <text class="request-time">{{formatTime(item.createdAt)}}</text>
+            </view>
+            <view class="request-actions">
+              <button class="btn btn-reject" bindtap="handleReject" data-request-id="{{item._id}}">拒绝</button>
+              <button class="btn btn-accept" bindtap="handleAccept" data-request-id="{{item._id}}">接受</button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 已发送请求 -->
+    <view class="section-card" wx:if="{{outgoingRequests.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">已发送请求</text>
+      </view>
+      <view class="request-list">
+        <block wx:for="{{outgoingRequests}}" wx:key="index">
+          <view class="request-item">
+            <view class="request-info">
+              <text class="request-text">发送给 {{item.targetNickname || '用户'}} 的绑定请求</text>
+              <text class="request-time">{{formatTime(item.createdAt)}}</text>
+            </view>
+            <view class="request-actions">
+              <button class="btn btn-cancel" bindtap="handleCancel" data-request-id="{{item._id}}">取消</button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="instructions">
+    <view class="instruction-item">
+      <text class="instruction-icon">1.</text>
+      <text class="instruction-text">点击上方 OpenID 复制你的 OpenID 给对方</text>
+    </view>
+    <view class="instruction-item">
+      <text class="instruction-icon">2.</text>
+      <text class="instruction-text">输入对方的 OpenID，发送绑定请求</text>
+    </view>
+    <view class="instruction-item">
+      <text class="instruction-icon">3.</text>
+      <text class="instruction-text">对方需要在小程序中接受您的请求</text>
+    </view>
+    <view class="instruction-item">
+      <text class="instruction-icon">4.</text>
+      <text class="instruction-text">绑定成功后，双方可共享纪念日和记录</text>
+    </view>
+  </view>
+</view>

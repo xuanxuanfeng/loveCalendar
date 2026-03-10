@@ -1,0 +1,234 @@
+/* components/calendar/calendar.wxss */
+.calendar-container {
+  background: linear-gradient(135deg, #FCE8E6 0%, #FADBD8 100%);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(133, 193, 220, 0.2);
+  margin: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #85C1DC, #F1C27D, #85C1DC);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.month-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.month-nav:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+.nav-arrow {
+  font-size: 18px;
+  color: #5D8CAE;
+  font-weight: bold;
+}
+
+.month-year {
+  text-align: center;
+}
+
+.year {
+  font-size: 16px;
+  color: #5D8CAE;
+  margin-right: 5px;
+}
+
+.month {
+  font-size: 24px;
+  font-weight: bold;
+  color: #5D8CAE;
+  font-family: "思源黑体", "苹方", "冬青黑体", sans-serif;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 10px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 14px;
+  color: #85C1DC;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  position: relative;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  /* 使用 padding-top 来创建正方形 */
+  width: 100%;
+  padding-top: 100%; /* 创建正方形比例 */
+  overflow: hidden;
+}
+
+.calendar-day .day-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.calendar-day.current-month {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-day.current-month:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(133, 193, 220, 0.3);
+}
+
+.calendar-day.other-month {
+  background: rgba(250, 219, 216, 0.3);
+  color: #ccc;
+}
+
+.calendar-day.today {
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  box-shadow: 0 4px 16px rgba(133, 193, 220, 0.4);
+}
+
+.day-number {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5D8CAE;
+  margin-top: 8px; /* 为上方的标记留出空间 */
+  position: relative;
+  z-index: 2; /* 确保日期数字在标记上方 */
+}
+
+.calendar-day.other-month .day-number {
+  color: #ccc;
+}
+
+.calendar-day.today .day-number {
+  color: white;
+  font-weight: bold;
+}
+
+.calendar-day .has-record {
+  color: #F1C27D !important;
+}
+
+.calendar-day .is-anniversary {
+  color: #85C1DC !important;
+}
+
+.record-marker {
+  position: absolute;
+  top: 6px; /* 调整位置以适应新的布局 */
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  background: #F1C27D;
+  border-radius: 50%;
+  z-index: 3; /* 提高层级确保标记在前面 */
+}
+
+.anniversary-marker {
+  position: absolute;
+  top: 6px; /* 与记录标记在同一高度 */
+  right: 6px; /* 调整位置以适应新的布局 */
+  width: 6px;
+  height: 6px;
+  background: #dc8591;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(133, 193, 220, 0.6);
+  z-index: 3; /* 提高层级确保标记在前面 */
+}
+
+/* 响应式设计 */
+@media (max-width: 750px) {
+  .calendar-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .month {
+    font-size: 20px;
+  }
+
+  .day-number {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .calendar-grid {
+    gap: 6px;
+  }
+}
+
+/* 针对小屏幕的优化 */
+@media (max-width: 480px) {
+  .calendar-container {
+    margin: 8px;
+    padding: 12px;
+  }
+
+  .weekday {
+    font-size: 12px;
+    padding: 6px 0;
+  }
+
+  .day-number {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+}
+
+/* 针对大屏幕的优化 */
+@media (min-width: 751px) {
+  .calendar-container {
+    max-width: 600px;
+    margin: 20px auto;
+  }
+}

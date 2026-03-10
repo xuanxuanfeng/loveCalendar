@@ -1,0 +1,75 @@
+/* 在现有的index.wxss文件末尾添加以下样式 */
+
+.recent-anniversaries-section {
+  background: white;
+  margin: 15px 20px;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5D8CAE;
+}
+
+.view-all {
+  font-size: 12px;
+  color: #85C1DC;
+  cursor: pointer;
+}
+
+.anniversary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.anniversary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.anniversary-item:last-child {
+  border-bottom: none;
+}
+
+.anniversary-info {
+  flex: 1;
+}
+
+.anniversary-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.anniversary-date {
+  font-size: 12px;
+  color: #85C1DC;
+}
+
+.anniversary-countdown {
+  text-align: right;
+}
+
+.countdown-text {
+  font-size: 12px;
+  color: #F1C27D;
+  font-weight: 500;
+}

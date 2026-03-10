@@ -1,0 +1,104 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="title">情侣纪念日</text>
+    <text class="subtitle">记录每一个美好瞬间</text>
+  </view>
+
+  <!-- 快速操作区域 -->
+  <view class="quick-actions">
+    <view class="action-card" bindtap="goToAnniversaries">
+      <view class="action-icon">
+        <text class="icon">📅</text>
+      </view>
+      <view class="action-text">
+        <text class="action-title">纪念日</text>
+        <text class="action-desc">查看所有纪念日</text>
+      </view>
+    </view>
+
+    <view class="action-card" bindtap="goToAddRecord">
+      <view class="action-icon">
+        <text class="icon">📝</text>
+      </view>
+      <view class="action-text">
+        <text class="action-title">添加记录</text>
+        <text class="action-desc">记录今日美好</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 情侣状态提示 -->
+  <view class="couple-status" wx:if="{{hasCouple}}" bindtap="goToCoupleBind">
+    <view class="couple-icon">
+      <text class="icon">💕</text>
+    </view>
+    <view class="couple-text">
+      <text class="couple-title">已绑定情侣关系</text>
+      <text class="couple-desc">与另一半共享美好时光</text>
+    </view>
+    <view class="couple-arrow">
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="couple-status couple-status-unbind" wx:else bindtap="goToCoupleBind">
+    <view class="couple-icon">
+      <text class="icon">💔</text>
+    </view>
+    <view class="couple-text">
+      <text class="couple-title">未绑定情侣关系</text>
+      <text class="couple-desc">点击绑定，与另一半共享纪念日</text>
+    </view>
+    <view class="couple-arrow">
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 日历组件 -->
+  <calendar
+    current-date="{{currentDate}}"
+    records-map="{{recordsMap}}"
+    anniversaries-map="{{anniversariesMap}}"
+    bind:dayClick="onDayClick"
+    bind:monthChange="onMonthChange"
+  ></calendar>
+
+  <!-- 最近纪念日区域 -->
+  <view class="recent-anniversaries-section" wx:if="{{recentAnniversaries.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">近期纪念日</text>
+      <text class="view-all" bindtap="goToAnniversaries">查看全部</text>
+    </view>
+    <view class="anniversary-list">
+      <block wx:for="{{recentAnniversaries}}" wx:key="index">
+        <view class="anniversary-item" bindtap="viewAnniversaryDetail" data-anniversary="{{item}}">
+          <view class="anniversary-info">
+            <text class="anniversary-name">{{item.name}}</text>
+            <text class="anniversary-date">{{item.displayDate}}</text>
+          </view>
+          <view class="anniversary-countdown">
+            <text class="countdown-text">{{item.countdownText}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 底部导航提示 -->
+  <view class="legend">
+    <view class="legend-item">
+      <view class="legend-color record"></view>
+      <text class="legend-text">有记录</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color anniversary"></view>
+      <text class="legend-text">纪念日</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color today"></view>
+      <text class="legend-text">今天</text>
+    </view>
+  </view>
+</view>

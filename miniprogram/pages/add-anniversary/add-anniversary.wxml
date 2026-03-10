@@ -1,0 +1,41 @@
+<!-- pages/add-anniversary/add-anniversary.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">{{isEditing ? '编辑纪念日' : '设为纪念日'}}</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 纪念日名称 -->
+  <view class="input-section">
+    <text class="input-label">纪念日名称</text>
+    <input 
+      class="input-field" 
+      placeholder="例如：恋爱纪念日、结婚纪念日" 
+      value="{{name}}" 
+      bindinput="onNameInput"
+    />
+  </view>
+
+  <!-- 日期选择 -->
+  <view class="date-section">
+    <text class="date-label">选择日期</text>
+    <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
+      <view class="date-picker">
+        <text class="selected-date">{{selectedDate}}</text>
+        <text class="picker-icon">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="action-section">
+    <button class="save-btn" bindtap="saveAnniversary" disabled="{{isSaving}}">
+      {{isSaving ? '保存中...' : (isEditing ? '更新纪念日' : '添加纪念日')}}
+    </button>
+  </view>
+</view>

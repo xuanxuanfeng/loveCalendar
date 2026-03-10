@@ -1,0 +1,7 @@
+{
+  "runtime": "Nodejs18.15",
+  "installDependency": true,
+  "permissions": {
+    "openapi": []
+  }
+}

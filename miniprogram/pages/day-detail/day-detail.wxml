@@ -1,0 +1,63 @@
+<!-- pages/day-detail/day-detail.wxml -->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">{{displayDate}}</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 添加记录和纪念日按钮 -->
+  <view class="add-record-section">
+    <view class="button-group">
+      <button class="add-btn" bindtap="addRecordForDate">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加记录</text>
+      </button>
+      <button class="anniversary-btn" bindtap="setAsAnniversary">
+        <text class="anniversary-icon">📅</text>
+        <text class="anniversary-text">设为纪念日</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="records-list">
+    <block wx:for="{{records}}" wx:key="id">
+      <view class="record-card">
+        <view class="record-header">
+          <text class="record-time">{{formatTime(item.createdAt)}}</text>
+          <view class="record-actions">
+            <text class="edit-btn" bindtap="editRecord" data-record="{{item}}">编辑</text>
+            <text class="delete-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</text>
+          </view>
+        </view>
+        
+        <view class="record-content" bindtap="viewRecordDetail" data-record="{{item}}">
+          <text class="record-text">{{item.content || '无文字内容'}}</text>
+          
+          <view wx:if="{{item.images && item.images.length > 0}}" class="record-images">
+            <block wx:for="{{item.images}}" wx:key="index">
+              <image 
+                src="{{item}}" 
+                class="record-image" 
+                mode="aspectFill"
+                bindtap="previewImage"
+                data-images="{{item.images}}"
+                data-current="{{index}}"
+              />
+            </block>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 无记录提示 -->
+    <view wx:if="{{records.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无记录，快去添加第一篇吧～</text>
+    </view>
+  </view>
+</view>
