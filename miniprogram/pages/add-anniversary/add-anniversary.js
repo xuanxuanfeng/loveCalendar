@@ -4,17 +4,36 @@ Page({
     anniversaryId: null,
     name: '',
     selectedDate: new Date().toISOString().split('T')[0],
+    isCountdownMode: false,
+    countdownDaysInput: '',
+    countdownDaysList: [],
     isEditing: false,
     isSaving: false
   },
 
   onLoad(options) {
     if (options.anniversaryId) {
-      // 编辑模式
+      // 编辑模式 - 从 URL 参数中获取倒数日信息
+      let countdownDaysList = [];
+      if (options.countdownDays) {
+        try {
+          // 尝试解析 JSON 数组
+          countdownDaysList = JSON.parse(decodeURIComponent(options.countdownDays));
+        } catch (e) {
+          // 如果是旧格式，尝试解析为单个数字
+          const days = parseInt(options.countdownDays);
+          if (!isNaN(days)) {
+            countdownDaysList = [days];
+          }
+        }
+      }
+      
       this.setData({
         anniversaryId: options.anniversaryId,
         name: decodeURIComponent(options.name || ''),
         selectedDate: options.date || new Date().toISOString().split('T')[0],
+        isCountdownMode: options.isCountdown === 'true',
+        countdownDaysList: countdownDaysList,
         isEditing: true
       });
     } else if (options.date) {
@@ -50,11 +69,91 @@ Page({
     });
   },
 
+  // 倒数日模式切换
+  onCountdownModeChange(e) {
+    this.setData({
+      isCountdownMode: e.detail.value
+    });
+  },
+
+  // 倒数日天数输入
+  onCountdownDaysInput(e) {
+    this.setData({
+      countdownDaysInput: e.detail.value
+    });
+  },
+
+  // 添加倒数日天数
+  addCountdownDay() {
+    const days = parseInt(this.data.countdownDaysInput);
+    if (!this.data.countdownDaysInput || isNaN(days) || days <= 0) {
+      wx.showToast({
+        title: '请输入有效的天数',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 检查是否已存在
+    if (this.data.countdownDaysList.includes(days)) {
+      wx.showToast({
+        title: '该天数已存在',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 添加并排序
+    const newList = [...this.data.countdownDaysList, days].sort((a, b) => a - b);
+    this.setData({
+      countdownDaysList: newList,
+      countdownDaysInput: ''
+    });
+  },
+
+  // 快捷添加倒数日天数
+  addQuickCountdownDay(e) {
+    const days = e.currentTarget.dataset.days;
+    
+    // 检查是否已存在
+    if (this.data.countdownDaysList.includes(days)) {
+      wx.showToast({
+        title: '该天数已存在',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 添加并排序
+    const newList = [...this.data.countdownDaysList, days].sort((a, b) => a - b);
+    this.setData({
+      countdownDaysList: newList
+    });
+  },
+
+  // 删除倒数日天数
+  removeCountdownDay(e) {
+    const index = e.currentTarget.dataset.index;
+    const newList = this.data.countdownDaysList.filter((_, i) => i !== index);
+    this.setData({
+      countdownDaysList: newList
+    });
+  },
+
   // 保存纪念日
   async saveAnniversary() {
     if (!this.data.name.trim()) {
       wx.showToast({
         title: '请输入纪念日名称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 如果是倒数日模式，验证至少有一个天数
+    if (this.data.isCountdownMode && this.data.countdownDaysList.length === 0) {
+      wx.showToast({
+        title: '请至少添加一个倒数日天数',
         icon: 'none'
       });
       return;
@@ -72,7 +171,9 @@ Page({
         data: {
           anniversaryId: this.data.anniversaryId,
           name: this.data.name.trim(),
-          date: this.data.selectedDate
+          date: this.data.selectedDate,
+          isCountdownMode: this.data.isCountdownMode,
+          countdownDays: this.data.isCountdownMode ? this.data.countdownDaysList : null
         }
       });
 

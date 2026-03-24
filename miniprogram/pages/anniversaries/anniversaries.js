@@ -43,16 +43,17 @@ Page({
       });
 
       if (result.result.success) {
-        // 计算每个纪念日的倒计时
-        const anniversariesWithCountdown = result.result.anniversaries.map(anniversary => {
+        // 计算每个纪念日的倒计时和所有倒数日信息
+        const anniversariesWithInfo = result.result.anniversaries.map(anniversary => {
           return {
             ...anniversary,
-            countdownText: this.calculateCountdown(anniversary.date)
+            countdownText: this.calculateCountdown(anniversary),
+            allCountdowns: this.getAllCountdowns(anniversary)
           };
         });
 
         this.setData({
-          anniversaries: anniversariesWithCountdown
+          anniversaries: anniversariesWithInfo
         });
       } else {
         wx.showToast({
@@ -71,18 +72,63 @@ Page({
     }
   },
 
-  // 计算倒计时
-  calculateCountdown(anniversaryDate) {
+  // 计算倒计时（支持多个倒数日）
+  calculateCountdown(anniversary) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 解析纪念日日期字符串，确保使用本地时间
-    const [year, month, day] = anniversaryDate.split('-').map(Number);
-    const anniversary = new Date(year, month - 1, day); // month - 1 因为Date的月份是从0开始的
-    anniversary.setHours(0, 0, 0, 0);
+    // 如果是倒数日模式且有 countdownDays 数组
+    if (anniversary.isCountdownMode && anniversary.countdownDays && Array.isArray(anniversary.countdownDays)) {
+      // 解析纪念日日期字符串，确保正确解析
+      let startDate;
+      if (typeof anniversary.date === 'string') {
+        const [year, month, day] = anniversary.date.split('-').map(Number);
+        startDate = new Date(year, month - 1, day);
+      } else {
+        startDate = new Date(anniversary.date);
+      }
+      startDate.setHours(0, 0, 0, 0);
+
+      // 找出所有还未到达的倒数日
+      const upcomingCountdowns = [];
+      anniversary.countdownDays.forEach(days => {
+        const targetDays = parseInt(days); // 确保是数字
+        const targetDate = new Date(startDate);
+        targetDate.setDate(targetDate.getDate() + targetDays);
+        const diffTime = targetDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0) {
+          upcomingCountdowns.push({
+            days: targetDays,
+            diffDays: diffDays
+          });
+        }
+      });
+
+      // 如果有即将到来的倒数日，返回最近的一个
+      if (upcomingCountdowns.length > 0) {
+        upcomingCountdowns.sort((a, b) => a.diffDays - b.diffDays);
+        const nearest = upcomingCountdowns[0];
+        if (nearest.diffDays === 0) {
+          return `今天 (${nearest.days}天)`;
+        } else if (nearest.diffDays === 1) {
+          return `还剩 1 天 (${nearest.days}天)`;
+        } else {
+          return `还剩${nearest.diffDays}天 (${nearest.days}天)`;
+        }
+      } else {
+        // 所有倒数日都已过
+        return '已过';
+      }
+    }
+
+    // 普通纪念日模式（每年重复）
+    const [year, month, day] = anniversary.date.split('-').map(Number);
+    const anniversaryDate = new Date(year, month - 1, day);
+    anniversaryDate.setHours(0, 0, 0, 0);
 
     // 设置今年的纪念日
-    const thisYearAnniversary = new Date(today.getFullYear(), anniversary.getMonth(), anniversary.getDate());
+    const thisYearAnniversary = new Date(today.getFullYear(), anniversaryDate.getMonth(), anniversaryDate.getDate());
 
     let diffTime;
     if (thisYearAnniversary >= today) {
@@ -90,7 +136,7 @@ Page({
       diffTime = thisYearAnniversary.getTime() - today.getTime();
     } else {
       // 今年已过，计算明年的
-      const nextYearAnniversary = new Date(today.getFullYear() + 1, anniversary.getMonth(), anniversary.getDate());
+      const nextYearAnniversary = new Date(today.getFullYear() + 1, anniversaryDate.getMonth(), anniversaryDate.getDate());
       diffTime = nextYearAnniversary.getTime() - today.getTime();
     }
 
@@ -99,10 +145,54 @@ Page({
     if (diffDays === 0) {
       return '今天';
     } else if (diffDays === 1) {
-      return '还剩1天';
+      return '还剩 1 天';
     } else {
       return `还剩${diffDays}天`;
     }
+  },
+
+  // 获取所有倒数日信息（用于显示列表）
+  getAllCountdowns(anniversary) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (!anniversary.isCountdownMode || !anniversary.countdownDays || !Array.isArray(anniversary.countdownDays)) {
+      return [];
+    }
+
+    // 解析纪念日日期字符串
+    const [year, month, day] = anniversary.date.split('-').map(Number);
+    const startDate = new Date(year, month - 1, day);
+    startDate.setHours(0, 0, 0, 0);
+
+    // 计算每个倒数日的剩余天数
+    const countdowns = [];
+    anniversary.countdownDays.forEach(days => {
+      const targetDays = parseInt(days); // 确保是数字
+      const targetDate = new Date(startDate);
+      targetDate.setDate(targetDate.getDate() + targetDays);
+      const diffTime = targetDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      let status;
+      if (diffDays < 0) {
+        status = '已过';
+      } else if (diffDays === 0) {
+        status = '今天';
+      } else if (diffDays === 1) {
+        status = '还剩 1 天';
+      } else {
+        status = `还剩${diffDays}天`;
+      }
+
+      countdowns.push({
+        days: targetDays,
+        status: status,
+        isPassed: diffDays < 0
+      });
+    });
+
+    return countdowns;
   },
 
   // 格式化日期
@@ -123,8 +213,11 @@ Page({
   // 编辑纪念日
   editAnniversary(e) {
     const anniversary = e.currentTarget.dataset.anniversary;
+    // 将 countdownDays 数组转换为 JSON 字符串传递
+    const countdownDaysStr = anniversary.countdownDays ? encodeURIComponent(JSON.stringify(anniversary.countdownDays)) : '';
+    const url = `/pages/add-anniversary/add-anniversary?anniversaryId=${anniversary._id}&name=${encodeURIComponent(anniversary.name)}&date=${anniversary.date.split('T')[0]}&isCountdown=${anniversary.isCountdownMode || false}&countdownDays=${countdownDaysStr}`;
     wx.navigateTo({
-      url: `/pages/add-anniversary/add-anniversary?anniversaryId=${anniversary._id}&name=${encodeURIComponent(anniversary.name)}&date=${anniversary.date.split('T')[0]}`
+      url
     });
   },
 

@@ -151,12 +151,64 @@
   color: #85C1DC;
 }
 
+.anniversary-countdown-mode {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #999;
+}
+
+.mode-label {
+  margin-right: 8px;
+  color: #85C1DC;
+}
+
+.mode-value {
+  color: #666;
+  font-weight: 500;
+}
+
+/* 所有倒数日列表 */
+.all-countdowns {
+  margin-bottom: 8px;
+  padding: 8px 0;
+}
+
+.countdown-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.countdown-item:last-child {
+  margin-bottom: 0;
+}
+
+.countdown-item-label {
+  color: #85C1DC;
+  margin-right: 8px;
+  min-width: 50px;
+}
+
+.countdown-item-status {
+  color: #666;
+}
+
+.countdown-item-status.passed {
+  color: #999;
+  text-decoration: line-through;
+}
+
 .anniversary-countdown {
   display: flex;
   align-items: center;
   font-size: 14px;
   color: #F1C27D;
   font-weight: 500;
+  padding-top: 8px;
+  border-top: 1px dashed #f0f0f0;
 }
 
 .countdown-label {
@@ -181,7 +233,7 @@
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .anniversary-actions {
     align-self: flex-end;
   }

@@ -107,6 +107,133 @@
   font-size: 12px;
 }
 
+.countdown-section {
+  padding: 20px;
+  background: white;
+  margin: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.switch-label {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.switch-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.5;
+}
+
+.countdown-days-section {
+  padding: 20px;
+  background: white;
+  margin: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.countdown-days-header {
+  margin-bottom: 12px;
+}
+
+.input-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* 标签样式 */
+.countdown-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  border-radius: 16px;
+  color: white;
+  font-size: 14px;
+}
+
+.tag-text {
+  margin-right: 6px;
+}
+
+.tag-remove {
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 0 2px;
+}
+
+.tag-remove:hover {
+  opacity: 1;
+}
+
+.countdown-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.countdown-input {
+  flex: 1;
+  width: auto;
+}
+
+.add-tag-btn {
+  width: 80px;
+  height: 44px;
+  padding: 0;
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  color: white;
+  font-size: 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 快捷标签 */
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-label {
+  font-size: 12px;
+  color: #999;
+}
+
+.quick-tag {
+  padding: 4px 12px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #5D8CAE;
+  border: 1px solid #e0e0e0;
+}
+
 .action-section {
   padding: 30px 20px 20px 20px;
   margin: 10px 15px;

@@ -29,14 +29,28 @@
             <text class="delete-btn" bindtap="deleteAnniversary" data-id="{{item._id}}">删除</text>
           </view>
         </view>
-        
+
         <view class="anniversary-date">
           <text class="date-label">日期:</text>
           <text class="date-value">{{item.date}}</text>
         </view>
-        
+
+        <!-- 倒数日模式显示 -->
+        <view class="anniversary-countdown-mode" wx:if="{{item.isCountdownMode}}">
+          <text class="mode-label">模式:</text>
+          <text class="mode-value">倒数日</text>
+        </view>
+
+        <!-- 所有倒数日列表（仅在倒数日模式显示） -->
+        <view class="all-countdowns" wx:if="{{item.isCountdownMode && item.allCountdowns.length > 0}}">
+          <view class="countdown-item" wx:for="{{item.allCountdowns}}" wx:key="days">
+            <text class="countdown-item-label">{{item.days}}天:</text>
+            <text class="countdown-item-status {{item.isPassed ? 'passed' : ''}}">{{item.status}}</text>
+          </view>
+        </view>
+
         <view class="anniversary-countdown">
-          <text class="countdown-label">距离:</text>
+          <text class="countdown-label">最近距离:</text>
           <text class="countdown-value">{{item.countdownText}}</text>
         </view>
       </view>

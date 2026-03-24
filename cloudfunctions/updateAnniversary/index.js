@@ -9,7 +9,7 @@ const _ = db.command
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const { anniversaryId, name, date } = event
+  const { anniversaryId, name, date, isCountdownMode, countdownDays } = event
 
   try {
     // 查询纪念日是否存在
@@ -66,12 +66,23 @@ exports.main = async (event, context) => {
     }
 
     // 更新纪念日
+    const updateData = {
+      name: name,
+      date: new Date(`${date}T00:00:00+08:00`),
+      isCountdownMode: isCountdownMode || false,
+      updatedAt: new Date()
+    }
+
+    // 如果是倒数日模式，更新或添加 countdownDays 数组字段（确保是数字数组）
+    if (isCountdownMode && countdownDays && Array.isArray(countdownDays) && countdownDays.length > 0) {
+      updateData.countdownDays = countdownDays.map(d => parseInt(d))
+    } else {
+      // 如果不是倒数日模式，删除 countdownDays 字段
+      updateData.countdownDays = _.remove()
+    }
+
     const result = await db.collection('anniversaries').doc(anniversaryId).update({
-      data: {
-        name: name,
-        date: new Date(`${date}T00:00:00+08:00`),
-        updatedAt: new Date()
-      }
+      data: updateData
     })
 
     return {

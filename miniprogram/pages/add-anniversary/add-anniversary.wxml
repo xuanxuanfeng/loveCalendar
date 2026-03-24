@@ -13,10 +13,10 @@
   <!-- 纪念日名称 -->
   <view class="input-section">
     <text class="input-label">纪念日名称</text>
-    <input 
-      class="input-field" 
-      placeholder="例如：恋爱纪念日、结婚纪念日" 
-      value="{{name}}" 
+    <input
+      class="input-field"
+      placeholder="例如：恋爱纪念日、结婚纪念日"
+      value="{{name}}"
       bindinput="onNameInput"
     />
   </view>
@@ -30,6 +30,57 @@
         <text class="picker-icon">▼</text>
       </view>
     </picker>
+  </view>
+
+  <!-- 倒数日模式开关 -->
+  <view class="countdown-section">
+    <view class="switch-row">
+      <text class="switch-label">启用倒数日模式</text>
+      <switch
+        class="countdown-switch"
+        checked="{{isCountdownMode}}"
+        bindchange="onCountdownModeChange"
+        color="#5D8CAE"
+      />
+    </view>
+    <text class="switch-desc">开启后可自定义多个倒数日（如 100 天、365 天、520 天）</text>
+  </view>
+
+  <!-- 倒数日天数输入（仅在倒数日模式下显示） -->
+  <view class="countdown-days-section" wx:if="{{isCountdownMode}}">
+    <view class="countdown-days-header">
+      <text class="input-label">倒数日天数</text>
+      <text class="input-desc">可添加多个，如 100、365、520 等</text>
+    </view>
+    
+    <!-- 已添加的倒数日标签 -->
+    <view class="countdown-tags" wx:if="{{countdownDaysList.length > 0}}">
+      <view class="tag" wx:for="{{countdownDaysList}}" wx:key="*this">
+        <text class="tag-text">{{item}}</text>
+        <text class="tag-remove" bindtap="removeCountdownDay" data-index="{{index}}" data-countdown="{{item}}">×</text>
+      </view>
+    </view>
+    
+    <!-- 输入框和添加按钮 -->
+    <view class="countdown-input-row">
+      <input
+        class="input-field countdown-input"
+        type="number"
+        placeholder="输入天数"
+        value="{{countdownDaysInput}}"
+        bindinput="onCountdownDaysInput"
+      />
+      <button class="add-tag-btn" bindtap="addCountdownDay">添加</button>
+    </view>
+    
+    <!-- 快捷选项 -->
+    <view class="quick-tags">
+      <text class="quick-label">快捷添加:</text>
+      <view class="quick-tag" bindtap="addQuickCountdownDay" data-days="100">100 天</view>
+      <view class="quick-tag" bindtap="addQuickCountdownDay" data-days="365">365 天</view>
+      <view class="quick-tag" bindtap="addQuickCountdownDay" data-days="520">520 天</view>
+      <view class="quick-tag" bindtap="addQuickCountdownDay" data-days="1000">1000 天</view>
+    </view>
   </view>
 
   <!-- 保存按钮 -->

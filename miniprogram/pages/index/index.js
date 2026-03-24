@@ -136,7 +136,7 @@ Page({
 
         // 计算每个纪念日的倒计时和显示日期
         const anniversariesWithInfo = anniversaries.map(anniversary => {
-          const countdownText = this.calculateCountdown(anniversary.date);
+          const countdownText = this.calculateCountdown(anniversary);
           const displayDate = this.formatDisplayDate(anniversary.date);
           return {
             ...anniversary,
@@ -145,19 +145,19 @@ Page({
           };
         });
 
-        // 按倒计时天数排序，获取最近的3个
+        // 按倒计时天数排序，获取最近的 3 个
         const sortedAnniversaries = anniversariesWithInfo.sort((a, b) => {
           // 将倒计时文本转换为数字进行排序
           const getDays = (text) => {
             if (text === '今天') return 0;
-            if (text === '还剩1天') return 1;
-            const match = text.match(/还剩(\d+)天/);
+            if (text === '还剩 1 天') return 1;
+            const match = text.match(/还剩 (\d+) 天/);
             return match ? parseInt(match[1]) : Number.MAX_VALUE;
           };
           return getDays(a.countdownText) - getDays(b.countdownText);
         });
 
-        // 取前3个最近的纪念日
+        // 取前 3 个最近的纪念日
         const recentAnniversaries = sortedAnniversaries.slice(0, 3);
 
         this.setData({
@@ -169,18 +169,63 @@ Page({
     }
   },
 
-  // 计算倒计时
-  calculateCountdown(anniversaryDate) {
+  // 计算倒计时（支持倒数日模式）
+  calculateCountdown(anniversary) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 解析纪念日日期字符串，确保使用本地时间
-    const [year, month, day] = anniversaryDate.split('-').map(Number);
-    const anniversary = new Date(year, month - 1, day); // month - 1 因为Date的月份是从0开始的
-    anniversary.setHours(0, 0, 0, 0);
+    // 如果是倒数日模式且有 countdownDays 数组
+    if (anniversary.isCountdownMode && anniversary.countdownDays && Array.isArray(anniversary.countdownDays)) {
+      // 解析纪念日日期字符串，确保正确解析
+      let startDate;
+      if (typeof anniversary.date === 'string') {
+        const [year, month, day] = anniversary.date.split('-').map(Number);
+        startDate = new Date(year, month - 1, day);
+      } else {
+        startDate = new Date(anniversary.date);
+      }
+      startDate.setHours(0, 0, 0, 0);
+
+      // 找出所有还未到达的倒数日
+      const upcomingCountdowns = [];
+      anniversary.countdownDays.forEach(days => {
+        const targetDays = parseInt(days); // 确保是数字
+        const targetDate = new Date(startDate);
+        targetDate.setDate(targetDate.getDate() + targetDays);
+        const diffTime = targetDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0) {
+          upcomingCountdowns.push({
+            days: targetDays,
+            diffDays: diffDays
+          });
+        }
+      });
+
+      // 如果有即将到来的倒数日，返回最近的一个
+      if (upcomingCountdowns.length > 0) {
+        upcomingCountdowns.sort((a, b) => a.diffDays - b.diffDays);
+        const nearest = upcomingCountdowns[0];
+        if (nearest.diffDays === 0) {
+          return `今天 (${nearest.days}天)`;
+        } else if (nearest.diffDays === 1) {
+          return `还剩 1 天 (${nearest.days}天)`;
+        } else {
+          return `还剩${nearest.diffDays}天 (${nearest.days}天)`;
+        }
+      } else {
+        // 所有倒数日都已过
+        return '已过';
+      }
+    }
+
+    // 普通纪念日模式（每年重复）
+    const [year, month, day] = anniversary.date.split('-').map(Number);
+    const anniversaryDate = new Date(year, month - 1, day);
+    anniversaryDate.setHours(0, 0, 0, 0);
 
     // 设置今年的纪念日
-    const thisYearAnniversary = new Date(today.getFullYear(), anniversary.getMonth(), anniversary.getDate());
+    const thisYearAnniversary = new Date(today.getFullYear(), anniversaryDate.getMonth(), anniversaryDate.getDate());
 
     let diffTime;
     if (thisYearAnniversary >= today) {
@@ -188,7 +233,7 @@ Page({
       diffTime = thisYearAnniversary.getTime() - today.getTime();
     } else {
       // 今年已过，计算明年的
-      const nextYearAnniversary = new Date(today.getFullYear() + 1, anniversary.getMonth(), anniversary.getDate());
+      const nextYearAnniversary = new Date(today.getFullYear() + 1, anniversaryDate.getMonth(), anniversaryDate.getDate());
       diffTime = nextYearAnniversary.getTime() - today.getTime();
     }
 
@@ -197,7 +242,7 @@ Page({
     if (diffDays === 0) {
       return '今天';
     } else if (diffDays === 1) {
-      return '还剩1天';
+      return '还剩 1 天';
     } else {
       return `还剩${diffDays}天`;
     }
@@ -207,7 +252,7 @@ Page({
   formatDisplayDate(dateString) {
     // 解析日期字符串，确保使用本地时间
     const [year, month, day] = dateString.split('-').map(Number);
-    const date = new Date(year, month - 1, day); // month - 1 因为Date的月份是从0开始的
+    const date = new Date(year, month - 1, day); // month - 1 因为 Date 的月份是从 0 开始的
     const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
     const monthNum = date.getMonth() + 1;
     const dayNum = date.getDate();
