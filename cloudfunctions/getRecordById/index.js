@@ -11,6 +11,10 @@ exports.main = async (event, context) => {
   const { recordId } = event
 
   try {
+    if (!recordId || typeof recordId !== 'string') {
+      return { success: false, error: '记录 ID 无效' }
+    }
+
     // 查询指定 ID 的记录
     const result = await db.collection('records').doc(recordId).get()
 

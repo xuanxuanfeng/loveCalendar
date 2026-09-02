@@ -1,0 +1,29 @@
+{
+  "records": {
+    "read": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",
+    "write": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",
+    "create": "auth.openid == doc._openid",
+    "_comment": "创建者或情侣可读写。需在云开发控制台配置。"
+  },
+  "anniversaries": {
+    "read": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",
+    "write": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",
+    "create": "auth.openid == doc._openid",
+    "_comment": "创建者或情侣可读写。需在云开发控制台配置。"
+  },
+  "users": {
+    "read": "auth.openid == doc._openid",
+    "write": "auth.openid == doc._openid",
+    "_comment": "用户只能读写自己的资料。"
+  },
+  "couples": {
+    "read": "auth.openid == doc.user1Openid || auth.openid == doc.user2Openid",
+    "write": "auth.openid == doc.user1Openid || auth.openid == doc.user2Openid",
+    "_comment": "情侣双方可读写。"
+  },
+  "coupleRequests": {
+    "read": "auth.openid == doc.senderOpenid || auth.openid == doc.targetOpenid",
+    "write": "auth.openid == doc.senderOpenid || auth.openid == doc.targetOpenid",
+    "_comment": "请求双方可读写。"
+  }
+}

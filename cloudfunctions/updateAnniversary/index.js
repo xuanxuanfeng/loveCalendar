@@ -7,12 +7,43 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+const MAX_NAME_LENGTH = 50
+const MAX_COUNTDOWN_DAYS = 20
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { anniversaryId, name, date, isCountdownMode, countdownDays } = event
 
   try {
-    // 查询纪念日是否存在
+    if (!anniversaryId || typeof anniversaryId !== 'string') {
+      return { success: false, error: '纪念日 ID 无效' }
+    }
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return { success: false, error: '纪念日名称不能为空' }
+    }
+
+    if (name.trim().length > MAX_NAME_LENGTH) {
+      return { success: false, error: `名称不能超过${MAX_NAME_LENGTH}字` }
+    }
+
+    if (!date || !DATE_REGEX.test(date)) {
+      return { success: false, error: '日期格式无效，应为 YYYY-MM-DD' }
+    }
+
+    if (isCountdownMode && countdownDays) {
+      if (!Array.isArray(countdownDays) || countdownDays.length > MAX_COUNTDOWN_DAYS) {
+        return { success: false, error: `倒数日数量不能超过${MAX_COUNTDOWN_DAYS}个` }
+      }
+      for (const d of countdownDays) {
+        const num = parseInt(d)
+        if (isNaN(num) || num < 1) {
+          return { success: false, error: '倒数日天数必须为正整数' }
+        }
+      }
+    }
+
     const existingAnniversary = await db.collection('anniversaries').doc(anniversaryId).get()
 
     if (!existingAnniversary.data) {
@@ -22,11 +53,9 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 检查用户权限：允许自己或情侣关系中的另一方修改
     let hasPermission = existingAnniversary.data._openid === wxContext.OPENID
 
     if (!hasPermission) {
-      // 检查是否有情侣关系（查询 user1Openid 或 user2Openid 包含当前用户的记录）
       const coupleResult = await db.collection('couples').where({
         $or: [
           { user1Openid: wxContext.OPENID },
@@ -37,7 +66,6 @@ exports.main = async (event, context) => {
 
       if (coupleResult.data.length > 0) {
         const couple = coupleResult.data[0]
-        // 检查纪念日是否属于情侣关系中的另一方
         if (existingAnniversary.data._openid === couple.user1Openid || existingAnniversary.data._openid === couple.user2Openid) {
           hasPermission = true
         }
@@ -51,10 +79,9 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 检查新名称是否与其他纪念日重复（排除当前纪念日）
     const sameNameAnniversary = await db.collection('anniversaries').where({
-      _openid: wxContext.OPENID,
-      name: name,
+      _openid: existingAnniversary.data._openid,
+      name: name.trim(),
       _id: _.neq(anniversaryId)
     }).get()
 
@@ -65,19 +92,16 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 更新纪念日
     const updateData = {
-      name: name,
+      name: name.trim(),
       date: new Date(`${date}T00:00:00+08:00`),
       isCountdownMode: isCountdownMode || false,
       updatedAt: new Date()
     }
 
-    // 如果是倒数日模式，更新或添加 countdownDays 数组字段（确保是数字数组）
     if (isCountdownMode && countdownDays && Array.isArray(countdownDays) && countdownDays.length > 0) {
       updateData.countdownDays = countdownDays.map(d => parseInt(d))
     } else {
-      // 如果不是倒数日模式，删除 countdownDays 字段
       updateData.countdownDays = _.remove()
     }
 

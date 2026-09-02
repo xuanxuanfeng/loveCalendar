@@ -6,12 +6,40 @@ cloud.init({
 
 const db = cloud.database()
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+const MAX_CONTENT_LENGTH = 1000
+const MAX_IMAGES = 9
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { recordId, date, content, images } = event
 
   try {
-    // 查询记录是否存在
+    if (!recordId || typeof recordId !== 'string') {
+      return { success: false, error: '记录 ID 无效' }
+    }
+
+    if (!date || !DATE_REGEX.test(date)) {
+      return { success: false, error: '日期格式无效，应为 YYYY-MM-DD' }
+    }
+
+    if (content !== undefined && content !== null) {
+      if (typeof content !== 'string' || content.length > MAX_CONTENT_LENGTH) {
+        return { success: false, error: `内容不能超过${MAX_CONTENT_LENGTH}字` }
+      }
+    }
+
+    if (images !== undefined && images !== null) {
+      if (!Array.isArray(images) || images.length > MAX_IMAGES) {
+        return { success: false, error: `图片数量不能超过${MAX_IMAGES}张` }
+      }
+      for (const url of images) {
+        if (typeof url !== 'string' || !url.startsWith('cloud://')) {
+          return { success: false, error: '包含无效的图片地址' }
+        }
+      }
+    }
+
     const existingRecord = await db.collection('records').doc(recordId).get()
 
     if (!existingRecord.data) {
@@ -21,11 +49,9 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 检查用户权限：允许自己或情侣关系中的另一方修改
     let hasPermission = existingRecord.data._openid === wxContext.OPENID
 
     if (!hasPermission) {
-      // 检查是否有情侣关系（查询 user1Openid 或 user2Openid 包含当前用户的记录）
       const coupleResult = await db.collection('couples').where({
         $or: [
           { user1Openid: wxContext.OPENID },
@@ -36,7 +62,6 @@ exports.main = async (event, context) => {
 
       if (coupleResult.data.length > 0) {
         const couple = coupleResult.data[0]
-        // 检查记录是否属于情侣关系中的另一方
         if (existingRecord.data._openid === couple.user1Openid || existingRecord.data._openid === couple.user2Openid) {
           hasPermission = true
         }
@@ -50,11 +75,10 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 更新记录
     const result = await db.collection('records').doc(recordId).update({
       data: {
         date: new Date(`${date}T00:00:00+08:00`),
-        content: content || '',
+        content: content ? content.trim() : '',
         images: images || [],
         updatedAt: new Date()
       }

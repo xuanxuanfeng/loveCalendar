@@ -11,6 +11,10 @@ exports.main = async (event, context) => {
   const { anniversaryId } = event
 
   try {
+    if (!anniversaryId || typeof anniversaryId !== 'string') {
+      return { success: false, error: '纪念日 ID 无效' }
+    }
+
     // 查询纪念日是否存在
     const existingAnniversary = await db.collection('anniversaries').doc(anniversaryId).get()
 

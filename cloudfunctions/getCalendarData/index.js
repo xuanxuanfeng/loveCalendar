@@ -7,11 +7,20 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { startDate, endDate } = event
 
   try {
+    if (!startDate || !DATE_REGEX.test(startDate)) {
+      return { success: false, error: '开始日期格式无效' }
+    }
+    if (!endDate || !DATE_REGEX.test(endDate)) {
+      return { success: false, error: '结束日期格式无效' }
+    }
+
     // 获取用户情侣关系
     const coupleResult = await db.collection('couples').where({
       $or: [

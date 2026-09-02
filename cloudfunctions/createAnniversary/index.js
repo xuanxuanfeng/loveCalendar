@@ -6,15 +6,42 @@ cloud.init({
 
 const db = cloud.database()
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+const MAX_NAME_LENGTH = 50
+const MAX_COUNTDOWN_DAYS = 20
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { name, date, isCountdownMode, countdownDays } = event
 
   try {
-    // 检查纪念日名称是否已存在（对于当前用户）
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return { success: false, error: '纪念日名称不能为空' }
+    }
+
+    if (name.trim().length > MAX_NAME_LENGTH) {
+      return { success: false, error: `名称不能超过${MAX_NAME_LENGTH}字` }
+    }
+
+    if (!date || !DATE_REGEX.test(date)) {
+      return { success: false, error: '日期格式无效，应为 YYYY-MM-DD' }
+    }
+
+    if (isCountdownMode && countdownDays) {
+      if (!Array.isArray(countdownDays) || countdownDays.length > MAX_COUNTDOWN_DAYS) {
+        return { success: false, error: `倒数日数量不能超过${MAX_COUNTDOWN_DAYS}个` }
+      }
+      for (const d of countdownDays) {
+        const num = parseInt(d)
+        if (isNaN(num) || num < 1) {
+          return { success: false, error: '倒数日天数必须为正整数' }
+        }
+      }
+    }
+
     const existingAnniversary = await db.collection('anniversaries').where({
       _openid: wxContext.OPENID,
-      name: name
+      name: name.trim()
     }).get()
 
     if (existingAnniversary.data.length > 0) {
@@ -24,17 +51,15 @@ exports.main = async (event, context) => {
       }
     }
 
-    // 创建纪念日，只保存一份
     const anniversaryData = {
       _openid: wxContext.OPENID,
-      name: name,
+      name: name.trim(),
       date: new Date(`${date}T00:00:00+08:00`),
       isCountdownMode: isCountdownMode || false,
       createdAt: new Date(),
       updatedAt: new Date()
     }
 
-    // 如果是倒数日模式，添加 countdownDays 数组字段（确保是数字数组）
     if (isCountdownMode && countdownDays && Array.isArray(countdownDays) && countdownDays.length > 0) {
       anniversaryData.countdownDays = countdownDays.map(d => parseInt(d))
     }

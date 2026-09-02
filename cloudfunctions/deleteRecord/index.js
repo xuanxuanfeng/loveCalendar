@@ -11,6 +11,10 @@ exports.main = async (event, context) => {
   const { recordId } = event
 
   try {
+    if (!recordId || typeof recordId !== 'string') {
+      return { success: false, error: '记录 ID 无效' }
+    }
+
     // 查询记录是否存在
     const existingRecord = await db.collection('records').doc(recordId).get()
 
