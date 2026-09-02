@@ -1,0 +1,107 @@
+<!-- pages/kitchen/kitchen.wxml -->
+<view class="container">
+  <!-- 今日菜单区域 -->
+  <view class="section today-menu">
+    <view class="section-title">
+      <text class="title-icon">🍽️</text>
+      <text class="title-text">{{todayMenu ? '今日' + mealTypeLabel : '今日暂无菜单'}}</text>
+      <text wx:if="{{todayMenu}}" class="menu-status status-{{todayMenu.status}}">
+        {{todayMenu.status === 'voting' ? '投票中' : todayMenu.status === 'decided' ? '已确定' : '已取消'}}
+      </text>
+    </view>
+
+    <view wx:if="{{todayMenu}}" class="candidates-list">
+      <view 
+        class="candidate-item {{selectedDishIds.indexOf(item.dishId) !== -1 ? 'selected' : ''}}" 
+        wx:for="{{todayMenu.candidates}}" 
+        wx:key="dishId"
+        bindtap="toggleCandidate"
+        data-dishid="{{item.dishId}}"
+      >
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" />
+        <view wx:else class="candidate-img-placeholder">🍴</view>
+        <text class="candidate-name">{{item.dishName}}</text>
+        <view class="candidate-check {{selectedDishIds.indexOf(item.dishId) !== -1 ? 'checked' : ''}}">
+          <text wx:if="{{selectedDishIds.indexOf(item.dishId) !== -1}}">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{todayMenu && todayMenu.status === 'voting'}}" class="vote-actions">
+      <view wx:if="{{myVote}}" class="my-vote-info">
+        <text>你选了：{{myVoteNames}}</text>
+      </view>
+      <button class="vote-btn" bindtap="submitVote" disabled="{{selectedDishIds.length === 0}}">
+        提交选择
+      </button>
+    </view>
+
+    <view wx:if="{{todayMenu && todayMenu.status === 'decided'}}" class="decided-info">
+      <text class="decided-text">最终决定：{{decidedDishName}}</text>
+    </view>
+
+    <view wx:if="{{!todayMenu}}" class="no-menu">
+      <text class="no-menu-text">今天还没有菜单哦</text>
+      <button class="create-menu-btn" bindtap="goCreateMenu">发起今日菜单</button>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="section quick-actions">
+    <view class="section-title">
+      <text class="title-text">快捷操作</text>
+    </view>
+    <view class="action-grid">
+      <view class="action-item" bindtap="goAddDish">
+        <text class="action-icon">🥘</text>
+        <text class="action-label">上架新菜</text>
+      </view>
+      <view class="action-item" bindtap="goDishList">
+        <text class="action-icon">📋</text>
+        <text class="action-label">菜品库</text>
+      </view>
+      <view class="action-item" bindtap="goCreateMenu">
+        <text class="action-icon">📝</text>
+        <text class="action-label">发起菜单</text>
+      </view>
+      <view class="action-item" bindtap="goMenuResult">
+        <text class="action-icon">🏆</text>
+        <text class="action-label">历史记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的菜品 -->
+  <view class="section my-dishes">
+    <view class="section-title">
+      <text class="title-text">我的菜品 ({{myDishCount}})</text>
+      <text class="section-more" bindtap="goDishList">查看全部 →</text>
+    </view>
+    <view wx:if="{{myDishes.length === 0}}" class="empty-dishes">
+      <text>还没有上架菜品，快去上架第一道吧！</text>
+    </view>
+    <view wx:else class="dish-preview-list">
+      <view class="dish-preview-item" wx:for="{{myDishes}}" wx:key="_id" bindtap="goDishDetail" data-id="{{item._id}}">
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="dish-preview-img" mode="aspectFill" />
+        <view wx:else class="dish-preview-img-placeholder">🍴</view>
+        <view class="dish-preview-info">
+          <text class="dish-preview-name">{{item.name}}</text>
+          <text class="dish-preview-likes">⭐ 被选{{item.likeCount}}次</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="section history" wx:if="{{history.length > 0}}">
+    <view class="section-title">
+      <text class="title-text">最近记录</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{history}}" wx:key="_id">
+        <text class="history-date">{{item.date}}</text>
+        <text class="history-dish">{{item.decidedDishName}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,132 @@
+/* pages/dish-list/dish-list.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFECEC 50%, #FFE0E0 100%);
+  padding-bottom: 20px;
+}
+
+.category-bar {
+  white-space: nowrap;
+  padding: 12px 15px;
+  background: white;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  color: #666;
+  background: #f5f5f5;
+  margin-right: 8px;
+}
+
+.category-tag.active {
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  color: white;
+}
+
+.search-bar {
+  padding: 10px 15px;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-input {
+  background: #f5f5f5;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.loading, .empty {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.dish-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 15px;
+}
+
+.dish-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dish-card-img, .dish-card-img-placeholder {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.dish-card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  font-size: 36px;
+}
+
+.dish-card-info {
+  padding: 10px;
+}
+
+.dish-card-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dish-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.dish-card-category {
+  font-size: 12px;
+  color: #85C1DC;
+  background: #E8F4FD;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.dish-card-likes {
+  font-size: 12px;
+  color: #FFB347;
+}
+
+.dish-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag {
+  font-size: 11px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.load-more {
+  text-align: center;
+  padding: 16px;
+  font-size: 14px;
+  color: #85C1DC;
+}

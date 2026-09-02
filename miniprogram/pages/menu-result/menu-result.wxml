@@ -1,0 +1,75 @@
+<!-- pages/menu-result/menu-result.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">菜单结果</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 今日菜单结果 -->
+  <view wx:if="{{todayMenu}}" class="result-section">
+    <view class="result-header">
+      <text class="result-date">{{todayMenu.date}}</text>
+      <text class="result-meal">{{mealTypeLabel}}</text>
+      <text class="result-status status-{{todayMenu.status}}">
+        {{todayMenu.status === 'voting' ? '投票中' : todayMenu.status === 'decided' ? '已确定' : '已取消'}}
+      </text>
+    </view>
+
+    <!-- 候选菜品及投票情况 -->
+    <view class="result-candidates">
+      <view class="result-candidate" wx:for="{{todayMenu.candidates}}" wx:key="dishId">
+        <view class="candidate-info">
+          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="result-img" mode="aspectFill" />
+          <view wx:else class="result-img-placeholder">🍴</view>
+          <text class="result-candidate-name">{{item.dishName}}</text>
+        </view>
+        <view class="vote-count">
+          <text class="vote-num">{{item.voteCount || 0}}</text>
+          <text class="vote-label">票</text>
+        </view>
+        <view wx:if="{{todayMenu.status === 'voting' && isOwner}}" class="decide-btn" bindtap="decideDish" data-dishid="{{item.dishId}}">
+          确定
+        </view>
+        <view wx:if="{{todayMenu.status === 'decided' && todayMenu.decidedDishId === item.dishId}}" class="decided-badge">
+          ✓ 最终选择
+        </view>
+      </view>
+    </view>
+
+    <!-- 投票详情 -->
+    <view wx:if="{{todayMenu.votes && todayMenu.votes.length > 0}}" class="votes-detail">
+      <text class="detail-title">投票详情</text>
+      <view class="vote-item" wx:for="{{todayMenu.votes}}" wx:key="_id">
+        <text class="voter-name">{{item.voterNickname || '匿名'}}</text>
+        <text class="voter-choices">选了：{{item.choiceNames}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <text class="empty-text">今日暂无菜单</text>
+  </view>
+
+  <!-- 历史菜单 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="title-text">历史菜单</text>
+    </view>
+    <view wx:if="{{history.length === 0}}" class="empty-history">
+      <text>暂无历史记录</text>
+    </view>
+    <view wx:else class="history-list">
+      <view class="history-item" wx:for="{{history}}" wx:key="_id">
+        <view class="history-left">
+          <text class="history-date">{{item.date}}</text>
+          <text class="history-meal">{{item.mealTypeLabel}}</text>
+        </view>
+        <text class="history-dish">{{item.decidedDishName}}</text>
+      </view>
+    </view>
+  </view>
+</view>

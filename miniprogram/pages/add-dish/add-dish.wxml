@@ -1,0 +1,83 @@
+<!-- pages/add-dish/add-dish.wxml -->
+<view class="container">
+  <view class="form-section">
+    <text class="label">菜品名称</text>
+    <input class="input" placeholder="给这道菜取个名字" value="{{name}}" bindinput="onNameInput" maxlength="30" />
+  </view>
+
+  <view class="form-section">
+    <text class="label">分类</text>
+    <view class="category-grid">
+      <view 
+        class="category-option {{category === item ? 'active' : ''}}" 
+        wx:for="{{categories}}" 
+        wx:key="*this" 
+        bindtap="selectCategory" 
+        data-category="{{item}}"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <view class="form-row">
+    <view class="form-section half">
+      <text class="label">难度</text>
+      <picker mode="selector" range="{{difficultyOptions}}" range-key="label" value="{{difficultyIndex}}" bindchange="onDifficultyChange">
+        <view class="picker-value">{{difficultyOptions[difficultyIndex].label}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-section half">
+      <text class="label">预估时间</text>
+      <view class="time-input-wrap">
+        <input class="input time-input" type="number" placeholder="0" value="{{estimatedTime}}" bindinput="onTimeInput" maxlength="3" />
+        <text class="time-unit">分钟</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="label">描述（可选）</text>
+    <textarea class="textarea" placeholder="描述一下这道菜的特色" value="{{description}}" bindinput="onDescInput" maxlength="200" />
+  </view>
+
+  <view class="form-section">
+    <text class="label">食材（可选）</text>
+    <input class="input" placeholder="如：番茄、鸡蛋、糖、盐" value="{{ingredients}}" bindinput="onIngredientsInput" maxlength="200" />
+  </view>
+
+  <view class="form-section">
+    <text class="label">标签（可选，最多5个）</text>
+    <view class="tags-input-wrap">
+      <view class="tag-item" wx:for="{{tags}}" wx:key="*this">
+        <text>{{item}}</text>
+        <text class="tag-remove" bindtap="removeTag" data-index="{{index}}">×</text>
+      </view>
+      <input 
+        wx:if="{{tags.length < 5}}"
+        class="tag-input" 
+        placeholder="输入标签回车添加" 
+        value="{{tagInput}}" 
+        bindinput="onTagInput" 
+        bindconfirm="addTag" 
+        maxlength="10"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="label">菜品图片（可选）</text>
+    <view class="image-picker">
+      <view wx:if="{{imageUrl}}" class="preview-wrap">
+        <image src="{{imageUrl}}" class="preview-img" mode="aspectFill" />
+        <view class="remove-img" bindtap="removeImage">×</view>
+      </view>
+      <view wx:else class="pick-btn" bindtap="chooseImage">
+        <text class="pick-icon">+</text>
+        <text class="pick-text">拍照或选择</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="submit-btn" bindtap="submitDish" disabled="{{submitting}}">
+    {{isEdit ? '保存修改' : '上架这道菜'}}
+  </button>
+</view>

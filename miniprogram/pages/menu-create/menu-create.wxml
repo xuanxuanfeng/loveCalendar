@@ -1,0 +1,49 @@
+<!-- pages/menu-create/menu-create.wxml -->
+<view class="container">
+  <!-- 日期选择 -->
+  <view class="form-section">
+    <text class="label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="picker-value">{{date}} ▾</view>
+    </picker>
+  </view>
+
+  <!-- 餐次选择 -->
+  <view class="form-section">
+    <text class="label">餐次</text>
+    <view class="meal-grid">
+      <view 
+        class="meal-option {{mealType === item.value ? 'active' : ''}}" 
+        wx:for="{{mealTypes}}" 
+        wx:key="value" 
+        bindtap="selectMealType" 
+        data-value="{{item.value}}"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 候选菜品 -->
+  <view class="form-section">
+    <view class="label-row">
+      <text class="label">候选菜品（已选{{selectedCandidates.length}}个）</text>
+      <text class="label-action" bindtap="goPickDishes">从菜品库选择 →</text>
+    </view>
+
+    <view wx:if="{{selectedCandidates.length === 0}}" class="empty-candidates">
+      <text>请从菜品库选择候选菜品</text>
+    </view>
+
+    <view wx:else class="candidates-list">
+      <view class="candidate-item" wx:for="{{selectedCandidates}}" wx:key="dishId">
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" />
+        <view wx:else class="candidate-img-placeholder">🍴</view>
+        <text class="candidate-name">{{item.dishName}}</text>
+        <view class="candidate-remove" bindtap="removeCandidate" data-index="{{index}}">×</view>
+      </view>
+    </view>
+  </view>
+
+  <button class="submit-btn" bindtap="submitMenu" disabled="{{submitting || selectedCandidates.length < 2}}">
+    发起菜单
+  </button>
+</view>

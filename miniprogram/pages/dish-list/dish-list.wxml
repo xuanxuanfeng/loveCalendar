@@ -1,0 +1,56 @@
+<!-- pages/dish-list/dish-list.wxml -->
+<view class="container">
+  <!-- 分类筛选 -->
+  <scroll-view scroll-x class="category-bar">
+    <view 
+      class="category-tag {{activeCategory === '' ? 'active' : ''}}" 
+      bindtap="selectCategory" 
+      data-category=""
+    >全部</view>
+    <view 
+      class="category-tag {{activeCategory === item ? 'active' : ''}}" 
+      wx:for="{{categories}}" 
+      wx:key="*this" 
+      bindtap="selectCategory" 
+      data-category="{{item}}"
+    >{{item}}</view>
+  </scroll-view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索菜品..." value="{{keyword}}" bindinput="onSearch" bindconfirm="doSearch" />
+  </view>
+
+  <!-- 菜品列表 -->
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{dishes.length === 0}}" class="empty">
+    <text class="empty-text">暂无菜品</text>
+  </view>
+
+  <view wx:else class="dish-grid">
+    <view class="dish-card" wx:for="{{dishes}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="dish-card-img" mode="aspectFill" lazy-load />
+      <view wx:else class="dish-card-img-placeholder">
+        <text>🍴</text>
+      </view>
+      <view class="dish-card-info">
+        <text class="dish-card-name">{{item.name}}</text>
+        <view class="dish-card-meta">
+          <text class="dish-card-category">{{item.category}}</text>
+          <text class="dish-card-likes">⭐ {{item.likeCount}}</text>
+        </view>
+        <view wx:if="{{item.tags && item.tags.length > 0}}" class="dish-card-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMore">
+    <text>加载更多</text>
+  </view>
+</view>
