@@ -57,20 +57,13 @@ Page({
   // 加载日历相关数据
   async loadCalendarData() {
     try {
-      // 获取用户信息
       const app = getApp();
-      const openid = app.globalData.openid;
 
+      // 等待用户初始化完成
+      const openid = await app.waitForUser();
       if (!openid) {
-        console.log('用户未登录，尝试初始化用户');
-        // 如果用户未登录，尝试初始化用户
-        await app.initUser();
-        // 重新获取用户信息
-        const newOpenid = app.globalData.openid;
-        if (!newOpenid) {
-          console.error('用户仍未登录');
-          return;
-        }
+        console.error('用户仍未登录');
+        return;
       }
 
       // 获取日历数据（记录和纪念日）
@@ -106,21 +99,17 @@ Page({
     }
   },
 
-  // 获取当月第一天
+  // 获取当月第一天（基于当前展示月份）
   getFirstDayOfMonth() {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0); // 设置时间为当天的开始，避免时区问题
-    date.setDate(1);
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const [year, month] = this.data.currentDate.split('-').map(Number);
+    return `${year}-${month.toString().padStart(2, '0')}-01`;
   },
 
-  // 获取当月最后一天
+  // 获取当月最后一天（基于当前展示月份）
   getLastDayOfMonth() {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0); // 设置时间为当天的开始，避免时区问题
-    date.setMonth(date.getMonth() + 1);
-    date.setDate(0);
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const [year, month] = this.data.currentDate.split('-').map(Number);
+    const lastDay = new Date(year, month, 0).getDate();
+    return `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
   },
 
   // 加载最近的纪念日
@@ -310,7 +299,8 @@ Page({
 
   // 跳转到添加记录页面
   goToAddRecord() {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
     wx.navigateTo({
       url: `/pages/add-record/add-record?date=${today}`
     });

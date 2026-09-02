@@ -158,14 +158,14 @@ Component({
     onPrevMonth() {
       const date = new Date(this.properties.currentDate);
       date.setMonth(date.getMonth() - 1);
-      const newDate = date.toISOString().split('T')[0];
+      const newDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
       this.triggerEvent('monthChange', { date: newDate });
     },
 
     onNextMonth() {
       const date = new Date(this.properties.currentDate);
       date.setMonth(date.getMonth() + 1);
-      const newDate = date.toISOString().split('T')[0];
+      const newDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
       this.triggerEvent('monthChange', { date: newDate });
     }
   }

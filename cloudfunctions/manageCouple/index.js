@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
       
       case 'update':
         // 更新情侣关系
-        return await updateCouple(event.coupleId, coupleName)
+        return await updateCouple(event.coupleId, coupleName, wxContext.OPENID)
       
       case 'delete':
         // 删除情侣关系
@@ -138,7 +138,16 @@ async function getCouple(userOpenid) {
 }
 
 // 更新情侣关系
-async function updateCouple(coupleId, coupleName) {
+async function updateCouple(coupleId, coupleName, userOpenid) {
+  const couple = await db.collection('couples').doc(coupleId).get()
+
+  if (!couple.data || (couple.data.user1Openid !== userOpenid && couple.data.user2Openid !== userOpenid)) {
+    return {
+      success: false,
+      error: 'Permission denied'
+    }
+  }
+
   const result = await db.collection('couples').doc(coupleId).update({
     data: {
       coupleName,
@@ -156,7 +165,7 @@ async function updateCouple(coupleId, coupleName) {
 async function deleteCouple(coupleId, userOpenid) {
   const couple = await db.collection('couples').doc(coupleId).get()
   
-  if (!couple.data || couple.data.user1Openid !== userOpenid && couple.data.user2Openid !== userOpenid) {
+  if (!couple.data || (couple.data.user1Openid !== userOpenid && couple.data.user2Openid !== userOpenid)) {
     return {
       success: false,
       error: 'Permission denied'

@@ -33,13 +33,13 @@ exports.main = async (event, context) => {
       _openid: _.in(queryOpenids)
     }).orderBy('date', 'asc').get()
 
-    // 去重：相同名称的纪念日只保留一个
+    // 去重：按 _id 去重（避免重复查询同一对情侣时出现重复记录）
     const seen = new Set()
     const uniqueAnniversaries = []
 
     for (const anniversary of result.data) {
-      if (!seen.has(anniversary.name)) {
-        seen.add(anniversary.name)
+      if (!seen.has(anniversary._id)) {
+        seen.add(anniversary._id)
         uniqueAnniversaries.push(anniversary)
       }
     }

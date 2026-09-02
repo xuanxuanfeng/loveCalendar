@@ -29,7 +29,7 @@
     <block wx:for="{{records}}" wx:key="id">
       <view class="record-card">
         <view class="record-header">
-          <text class="record-time">{{formatTime(item.createdAt)}}</text>
+          <text class="record-time">{{item.displayTime}}</text>
           <view class="record-actions">
             <text class="edit-btn" bindtap="editRecord" data-record="{{item}}">编辑</text>
             <text class="delete-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</text>

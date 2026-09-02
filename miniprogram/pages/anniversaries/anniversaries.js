@@ -23,18 +23,15 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' });
 
-      // 确保用户已登录
+      // 等待用户初始化完成
       const app = getApp();
-      if (!app.globalData.openid) {
-        console.log('用户未登录，尝试初始化用户');
-        await app.initUser();
-        if (!app.globalData.openid) {
-          wx.showToast({
-            title: '请先登录',
-            icon: 'error'
-          });
-          return;
-        }
+      const openid = await app.waitForUser();
+      if (!openid) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'error'
+        });
+        return;
       }
 
       const result = await wx.cloud.callFunction({
