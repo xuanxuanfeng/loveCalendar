@@ -4,6 +4,7 @@
     "pages/day-detail/day-detail",
     "pages/add-record/add-record",
     "pages/record-detail/record-detail",
+    "pages/record-versions/record-versions",
     "pages/anniversaries/anniversaries",
     "pages/add-anniversary/add-anniversary",
     "pages/couple-bind/couple-bind"

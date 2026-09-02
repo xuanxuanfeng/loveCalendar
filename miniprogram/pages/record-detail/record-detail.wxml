@@ -14,7 +14,19 @@
   <view class="record-detail">
     <view class="record-date">
       <text class="date-text">{{displayDate}}</text>
-      <text class="time-text">{{formatTime(record.createdAt)}}</text>
+      <text class="time-text">{{displayTime}}</text>
+    </view>
+
+    <!-- 作者信息 -->
+    <view class="author-info" wx:if="{{record.authorNickname}}">
+      <image wx:if="{{record.authorAvatar}}" src="{{record.authorAvatar}}" class="author-avatar" mode="aspectFill"/>
+      <view wx:else class="author-avatar default-avatar">
+        <text class="avatar-text">{{record.authorNickname[0] || '?'}}</text>
+      </view>
+      <view class="author-meta">
+        <text class="author-name">{{record.authorNickname}}</text>
+        <text class="edit-info" wx:if="{{record.editCount > 0}}">· 编辑 {{record.editCount}} 次 · v{{record.version}}</text>
+      </view>
     </view>
 
     <view class="record-content">
@@ -33,6 +45,52 @@
           data-current="{{index}}"
         />
       </block>
+    </view>
+
+    <!-- 最后编辑信息 -->
+    <view class="last-edited" wx:if="{{record.lastEditedBy && record.editCount > 0}}">
+      <text class="last-edited-text">最后编辑：{{lastEditedByName || '未知'}} · {{displayLastEditedAt}}</text>
+    </view>
+  </view>
+
+  <!-- 版本历史入口 -->
+  <view class="section" bindtap="viewVersions">
+    <text class="section-title">版本历史</text>
+    <text class="section-arrow">›</text>
+  </view>
+
+  <!-- 评论区域 -->
+  <view class="section comments-section">
+    <text class="section-title">评论 ({{comments.length}})</text>
+    
+    <view class="comments-list" wx:if="{{comments.length > 0}}">
+      <block wx:for="{{comments}}" wx:key="_id">
+        <view class="comment-item">
+          <view class="comment-avatar-wrap">
+            <image wx:if="{{item.authorAvatar}}" src="{{item.authorAvatar}}" class="comment-avatar" mode="aspectFill"/>
+            <view wx:else class="comment-avatar default-comment-avatar">
+              <text class="avatar-text-sm">{{item.authorNickname[0] || '?'}}</text>
+            </view>
+          </view>
+          <view class="comment-body">
+            <view class="comment-header">
+              <text class="comment-author">{{item.authorNickname || '匿名'}}</text>
+              <text class="comment-time">{{item.displayTime}}</text>
+            </view>
+            <text class="comment-content">{{item.content}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="no-comments" wx:else>
+      <text class="no-comments-text">暂无评论</text>
+    </view>
+
+    <!-- 评论输入 -->
+    <view class="comment-input-area">
+      <input class="comment-input" placeholder="写评论..." value="{{newComment}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment"/>
+      <button class="send-btn" bindtap="submitComment" disabled="{{!newComment.trim()}}">发送</button>
     </view>
   </view>
 

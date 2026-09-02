@@ -1,0 +1,39 @@
+<!-- pages/record-versions/record-versions.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">版本历史</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{versions.length === 0}}" class="empty">
+    <text class="empty-text">暂无版本记录</text>
+  </view>
+
+  <view wx:else class="version-list">
+    <view class="version-item" wx:for="{{versions}}" wx:key="_id">
+      <view class="version-header">
+        <view class="version-badge {{item.changeType === 'create' ? 'badge-create' : 'badge-edit'}}">
+          v{{item.version}}
+        </view>
+        <text class="version-type">{{item.changeType === 'create' ? '创建' : '编辑'}}</text>
+      </view>
+
+      <view class="version-meta">
+        <text class="meta-author">{{item.editorNickname || '未知用户'}}</text>
+        <text class="meta-time">{{item.displayTime}}</text>
+      </view>
+
+      <view wx:if="{{item.changeNote}}" class="version-note">
+        <text>{{item.changeNote}}</text>
+      </view>
+    </view>
+  </view>
+</view>
