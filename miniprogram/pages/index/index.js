@@ -1,7 +1,10 @@
 // pages/index/index.js
+const { getTodayStr, formatDisplayDate, getFirstDayOfMonth, getLastDayOfMonth } = require('../../utils/date')
+const { calculateCountdown } = require('../../utils/countdown')
+
 Page({
   data: {
-    currentDate: `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`,
+    currentDate: getTodayStr(),
     recordsMap: {},
     anniversariesMap: {},
     recentAnniversaries: [],
@@ -10,18 +13,15 @@ Page({
   },
 
   onLoad() {
-    // 初始化页面
     this.loadCalendarData();
     this.checkCoupleStatus();
   },
 
   onShow() {
-    // 页面显示时重新加载数据
     this.loadCalendarData();
     this.checkCoupleStatus();
   },
 
-  // 用户登录后回调
   onUserLogin() {
     this.loadCalendarData();
     this.checkCoupleStatus();
@@ -32,25 +32,15 @@ Page({
     try {
       const result = await wx.cloud.callFunction({
         name: 'manageCouple',
-        data: {
-          action: 'get'
-        }
+        data: { action: 'get' }
       });
 
-      if (result.result.success) {
-        this.setData({
-          hasCouple: true
-        });
-      } else {
-        this.setData({
-          hasCouple: false
-        });
-      }
+      this.setData({
+        hasCouple: result.result.success
+      });
     } catch (error) {
       console.error('检查情侣状态失败:', error);
-      this.setData({
-        hasCouple: false
-      });
+      this.setData({ hasCouple: false });
     }
   },
 
@@ -58,20 +48,19 @@ Page({
   async loadCalendarData() {
     try {
       const app = getApp();
-
-      // 等待用户初始化完成
       const openid = await app.waitForUser();
       if (!openid) {
         console.error('用户仍未登录');
         return;
       }
 
-      // 获取日历数据（记录和纪念日）
+      const [year, month] = this.data.currentDate.split('-').map(Number);
+
       const calendarResult = await wx.cloud.callFunction({
         name: 'getCalendarData',
         data: {
-          startDate: this.getFirstDayOfMonth(),
-          endDate: this.getLastDayOfMonth()
+          startDate: getFirstDayOfMonth(year, month),
+          endDate: getLastDayOfMonth(year, month)
         }
       });
 
@@ -81,35 +70,17 @@ Page({
           anniversariesMap: calendarResult.result.anniversariesByDate
         });
 
-        // 更新情侣状态
         if (calendarResult.result.hasCouple !== undefined) {
-          this.setData({
-            hasCouple: calendarResult.result.hasCouple
-          });
+          this.setData({ hasCouple: calendarResult.result.hasCouple });
         }
 
-        // 加载最近的纪念日
         this.loadRecentAnniversaries();
       } else {
         console.error('获取日历数据失败:', calendarResult.result.error);
       }
-
     } catch (error) {
       console.error('加载日历数据失败:', error);
     }
-  },
-
-  // 获取当月第一天（基于当前展示月份）
-  getFirstDayOfMonth() {
-    const [year, month] = this.data.currentDate.split('-').map(Number);
-    return `${year}-${month.toString().padStart(2, '0')}-01`;
-  },
-
-  // 获取当月最后一天（基于当前展示月份）
-  getLastDayOfMonth() {
-    const [year, month] = this.data.currentDate.split('-').map(Number);
-    const lastDay = new Date(year, month, 0).getDate();
-    return `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
   },
 
   // 加载最近的纪念日
@@ -123,20 +94,13 @@ Page({
       if (result.result.success) {
         const anniversaries = result.result.anniversaries || [];
 
-        // 计算每个纪念日的倒计时和显示日期
-        const anniversariesWithInfo = anniversaries.map(anniversary => {
-          const countdownText = this.calculateCountdown(anniversary);
-          const displayDate = this.formatDisplayDate(anniversary.date);
-          return {
-            ...anniversary,
-            countdownText,
-            displayDate
-          };
-        });
+        const anniversariesWithInfo = anniversaries.map(anniversary => ({
+          ...anniversary,
+          countdownText: calculateCountdown(anniversary),
+          displayDate: formatDisplayDate(anniversary.date)
+        }));
 
-        // 按倒计时天数排序，获取最近的 3 个
         const sortedAnniversaries = anniversariesWithInfo.sort((a, b) => {
-          // 将倒计时文本转换为数字进行排序
           const getDays = (text) => {
             if (text === '今天') return 0;
             if (text === '还剩 1 天') return 1;
@@ -146,108 +110,13 @@ Page({
           return getDays(a.countdownText) - getDays(b.countdownText);
         });
 
-        // 取前 3 个最近的纪念日
-        const recentAnniversaries = sortedAnniversaries.slice(0, 3);
-
         this.setData({
-          recentAnniversaries
+          recentAnniversaries: sortedAnniversaries.slice(0, 3)
         });
       }
     } catch (error) {
       console.error('加载最近纪念日失败:', error);
     }
-  },
-
-  // 计算倒计时（支持倒数日模式）
-  calculateCountdown(anniversary) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // 如果是倒数日模式且有 countdownDays 数组
-    if (anniversary.isCountdownMode && anniversary.countdownDays && Array.isArray(anniversary.countdownDays)) {
-      // 解析纪念日日期字符串，确保正确解析
-      let startDate;
-      if (typeof anniversary.date === 'string') {
-        const [year, month, day] = anniversary.date.split('-').map(Number);
-        startDate = new Date(year, month - 1, day);
-      } else {
-        startDate = new Date(anniversary.date);
-      }
-      startDate.setHours(0, 0, 0, 0);
-
-      // 找出所有还未到达的倒数日
-      const upcomingCountdowns = [];
-      anniversary.countdownDays.forEach(days => {
-        const targetDays = parseInt(days); // 确保是数字
-        const targetDate = new Date(startDate);
-        targetDate.setDate(targetDate.getDate() + targetDays);
-        const diffTime = targetDate.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays >= 0) {
-          upcomingCountdowns.push({
-            days: targetDays,
-            diffDays: diffDays
-          });
-        }
-      });
-
-      // 如果有即将到来的倒数日，返回最近的一个
-      if (upcomingCountdowns.length > 0) {
-        upcomingCountdowns.sort((a, b) => a.diffDays - b.diffDays);
-        const nearest = upcomingCountdowns[0];
-        if (nearest.diffDays === 0) {
-          return `今天 (${nearest.days}天)`;
-        } else if (nearest.diffDays === 1) {
-          return `还剩 1 天 (${nearest.days}天)`;
-        } else {
-          return `还剩${nearest.diffDays}天 (${nearest.days}天)`;
-        }
-      } else {
-        // 所有倒数日都已过
-        return '已过';
-      }
-    }
-
-    // 普通纪念日模式（每年重复）
-    const [year, month, day] = anniversary.date.split('-').map(Number);
-    const anniversaryDate = new Date(year, month - 1, day);
-    anniversaryDate.setHours(0, 0, 0, 0);
-
-    // 设置今年的纪念日
-    const thisYearAnniversary = new Date(today.getFullYear(), anniversaryDate.getMonth(), anniversaryDate.getDate());
-
-    let diffTime;
-    if (thisYearAnniversary >= today) {
-      // 今年还没到
-      diffTime = thisYearAnniversary.getTime() - today.getTime();
-    } else {
-      // 今年已过，计算明年的
-      const nextYearAnniversary = new Date(today.getFullYear() + 1, anniversaryDate.getMonth(), anniversaryDate.getDate());
-      diffTime = nextYearAnniversary.getTime() - today.getTime();
-    }
-
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) {
-      return '今天';
-    } else if (diffDays === 1) {
-      return '还剩 1 天';
-    } else {
-      return `还剩${diffDays}天`;
-    }
-  },
-
-  // 格式化显示日期
-  formatDisplayDate(dateString) {
-    // 解析日期字符串，确保使用本地时间
-    const [year, month, day] = dateString.split('-').map(Number);
-    const date = new Date(year, month - 1, day); // month - 1 因为 Date 的月份是从 0 开始的
-    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-    const monthNum = date.getMonth() + 1;
-    const dayNum = date.getDate();
-    const weekday = weekdays[date.getDay()];
-
-    return `${monthNum}月${dayNum}日`;
   },
 
   // 日期点击事件
@@ -261,55 +130,38 @@ Page({
   // 月份变化事件
   onMonthChange(e) {
     const { date } = e.detail;
-    // 确保日期格式正确
     const normalizedDate = this.normalizeDate(date);
-    this.setData({
-      currentDate: normalizedDate
-    });
-
-    // 重新加载该月的数据
+    this.setData({ currentDate: normalizedDate });
     this.loadCalendarData();
   },
 
   // 标准化日期格式
   normalizeDate(dateStr) {
     if (dateStr.includes('T')) {
-      // 如果是 ISO 格式，转换为本地日期格式
       const date = new Date(dateStr);
       return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
     }
     return dateStr;
   },
 
-  // 跳转到纪念日列表页面
   goToAnniversaries() {
-    wx.navigateTo({
-      url: '/pages/anniversaries/anniversaries'
-    });
+    wx.navigateTo({ url: '/pages/anniversaries/anniversaries' });
   },
 
-  // 查看纪念日详情
   viewAnniversaryDetail(e) {
     const anniversary = e.currentTarget.dataset.anniversary;
-    // 这里可以跳转到纪念日详情页或者直接跳转到对应的日期
     wx.navigateTo({
       url: `/pages/day-detail/day-detail?date=${anniversary.date}`
     });
   },
 
-  // 跳转到添加记录页面
   goToAddRecord() {
-    const now = new Date();
-    const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
     wx.navigateTo({
-      url: `/pages/add-record/add-record?date=${today}`
+      url: `/pages/add-record/add-record?date=${getTodayStr()}`
     });
   },
 
-  // 跳转到情侣绑定页面
   goToCoupleBind() {
-    wx.navigateTo({
-      url: '/pages/couple-bind/couple-bind'
-    });
+    wx.navigateTo({ url: '/pages/couple-bind/couple-bind' });
   }
 })

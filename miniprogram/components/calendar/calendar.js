@@ -1,9 +1,11 @@
 // components/calendar/calendar.js
+const { formatDate, getTodayStr } = require('../../utils/date')
+
 Component({
   properties: {
     currentDate: {
       type: String,
-      value: new Date().toISOString().split('T')[0]
+      value: formatDate(new Date())
     },
     recordsMap: {
       type: Object,
@@ -57,8 +59,7 @@ Component({
       for (let i = firstDayOfWeek - 1; i >= 0; i--) {
         const day = prevMonthDays - i;
         const prevDate = new Date(year, month - 1, day);
-        // 使用本地时间格式化日期
-        const dateStr = `${prevDate.getFullYear()}-${(prevDate.getMonth() + 1).toString().padStart(2, '0')}-${prevDate.getDate().toString().padStart(2, '0')}`;
+        const dateStr = formatDate(prevDate);
         calendarDays.push({
           date: dateStr,
           day: day,
@@ -72,8 +73,7 @@ Component({
       // 添加当前月的日期
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
-        // 使用本地时间格式化日期
-        const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        const dateStr = formatDate(date);
         calendarDays.push({
           date: dateStr,
           day: day,
@@ -88,8 +88,7 @@ Component({
       const remainingDays = 42 - calendarDays.length; // 6行7列
       for (let day = 1; day <= remainingDays; day++) {
         const nextDate = new Date(year, month + 1, day);
-        // 使用本地时间格式化日期
-        const dateStr = `${nextDate.getFullYear()}-${(nextDate.getMonth() + 1).toString().padStart(2, '0')}-${nextDate.getDate().toString().padStart(2, '0')}`;
+        const dateStr = formatDate(nextDate);
         calendarDays.push({
           date: dateStr,
           day: day,
@@ -127,19 +126,15 @@ Component({
 
     // 标准化日期格式
     normalizeDate(dateStr) {
-      // 确保日期格式为 YYYY-MM-DD
       if (dateStr.includes('T')) {
-        // 如果是 ISO 格式，转换为本地日期格式
         const date = new Date(dateStr);
-        return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        return formatDate(date);
       }
       return dateStr;
     },
 
     isToday(date) {
-      const today = new Date();
-      const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
-      return date === todayStr;
+      return date === getTodayStr();
     },
 
     getMonthName(month) {
@@ -158,15 +153,13 @@ Component({
     onPrevMonth() {
       const date = new Date(this.properties.currentDate);
       date.setMonth(date.getMonth() - 1);
-      const newDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-      this.triggerEvent('monthChange', { date: newDate });
+      this.triggerEvent('monthChange', { date: formatDate(date) });
     },
 
     onNextMonth() {
       const date = new Date(this.properties.currentDate);
       date.setMonth(date.getMonth() + 1);
-      const newDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-      this.triggerEvent('monthChange', { date: newDate });
+      this.triggerEvent('monthChange', { date: formatDate(date) });
     }
   }
 })

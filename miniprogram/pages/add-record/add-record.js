@@ -1,28 +1,22 @@
 // pages/add-record/add-record.js
+const { getTodayStr, formatDate } = require('../../utils/date')
+
 Page({
   data: {
-    selectedDate: new Date().toISOString().split('T')[0],
+    selectedDate: getTodayStr(),
     content: '',
-    images: [], // 本地图片路径
-    uploadedImages: [], // 已上传的图片 URL
+    images: [],
+    uploadedImages: [],
     isSaving: false,
-    recordId: null // 编辑模式下的记录 ID
+    recordId: null
   },
 
   onLoad(options) {
     // 获取传递的日期参数
     if (options.date) {
-      // 确保日期格式正确
-      this.setData({
-        selectedDate: options.date
-      });
+      this.setData({ selectedDate: options.date });
     } else {
-      // 如果没有传递日期，默认使用今天
-      const today = new Date();
-      const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
-      this.setData({
-        selectedDate: todayStr
-      });
+      this.setData({ selectedDate: getTodayStr() });
     }
 
     // 检查是否为编辑模式
@@ -46,10 +40,9 @@ Page({
 
       if (result.result.success) {
         const record = result.result.record;
-        // 确保日期格式正确
-        const dateStr = typeof record.date === 'string' ?
-          record.date.split('T')[0] :
-          `${record.date.getFullYear()}-${(record.date.getMonth() + 1).toString().padStart(2, '0')}-${record.date.getDate().toString().padStart(2, '0')}`;
+        const dateStr = typeof record.date === 'string'
+          ? record.date.split('T')[0]
+          : formatDate(record.date);
 
         // 处理图片 URL，确保它们是有效的云存储文件 ID
         const processedImages = Array.isArray(record.images) ? record.images.filter(url => url && typeof url === 'string') : [];
