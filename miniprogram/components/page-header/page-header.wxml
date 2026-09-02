@@ -1,0 +1,9 @@
+<!-- components/page-header/page-header.wxml -->
+<view class="page-header">
+  <view class="back-btn" bindtap="onBack">
+    <text class="back-icon">‹</text>
+    <text class="back-text">返回</text>
+  </view>
+  <text class="header-title">{{title}}</text>
+  <view class="header-placeholder"></view>
+</view>

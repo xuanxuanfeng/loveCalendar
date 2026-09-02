@@ -1,14 +1,6 @@
 <!-- pages/day-detail/day-detail.wxml -->
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-      <text class="back-text">返回</text>
-    </view>
-    <text class="title">{{displayDate}}</text>
-    <view class="placeholder"></view>
-  </view>
+  <page-header title="{{displayDate}}" />
 
   <!-- 添加记录和纪念日按钮 -->
   <view class="add-record-section">

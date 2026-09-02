@@ -1,4 +1,7 @@
 {
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header"
+  },
   "navigationBarTitleText": "添加记录",
   "navigationBarBackgroundColor": "#FFFFFF",
   "navigationBarTextStyle": "black"

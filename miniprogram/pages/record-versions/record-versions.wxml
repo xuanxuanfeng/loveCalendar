@@ -1,13 +1,6 @@
 <!-- pages/record-versions/record-versions.wxml -->
 <view class="container">
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-      <text class="back-text">返回</text>
-    </view>
-    <text class="title">版本历史</text>
-    <view class="placeholder"></view>
-  </view>
+  <page-header title="版本历史" />
 
   <view wx:if="{{loading}}" class="loading">
     <text>加载中...</text>

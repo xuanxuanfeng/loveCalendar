@@ -124,9 +124,5 @@ Page({
       current: images[current],
       urls: images
     });
-  },
-
-  goBack() {
-    wx.navigateBack();
   }
 })

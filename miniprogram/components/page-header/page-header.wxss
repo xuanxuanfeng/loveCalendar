@@ -1,0 +1,42 @@
+/* components/page-header/page-header.wxss */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 15px 20px;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #f8f9fa;
+}
+
+.back-icon {
+  font-size: 18px;
+  color: #5D8CAE;
+  margin-right: 4px;
+}
+
+.back-text {
+  font-size: 14px;
+  color: #5D8CAE;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #5D8CAE;
+  font-family: "思源黑体", "苹方", "冬青黑体", sans-serif;
+}
+
+.header-placeholder {
+  width: 60px;
+}

@@ -94,6 +94,130 @@
   border: none;
 }
 
+.invite-banner {
+  background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(255, 105, 180, 0.2);
+  box-shadow: 0 8px 24px rgba(255, 105, 180, 0.15);
+}
+
+.invite-content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.invite-emoji {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.invite-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5D8CAE;
+}
+
+.invite-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.invite-dismiss {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f0f0f0;
+  color: #666;
+  border: none;
+}
+
+.invite-dismiss::after {
+  border: none;
+}
+
+.invite-accept {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #85C1DC 0%, #F1C27D 100%);
+  color: white;
+  border: none;
+}
+
+.invite-accept::after {
+  border: none;
+}
+
+.invite-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.invite-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5D8CAE;
+  margin-bottom: 6px;
+}
+
+.invite-desc {
+  display: block;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #85C1DC 0%, #F1C27D 100%);
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  margin-right: 6px;
+  font-size: 18px;
+}
+
+.share-text {
+  font-size: 16px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.divider-text {
+  padding: 0 12px;
+  font-size: 13px;
+  color: #999;
+}
+
 .action-card {
   background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
   border-radius: 16px;

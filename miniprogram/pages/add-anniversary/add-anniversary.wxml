@@ -1,14 +1,6 @@
 <!-- pages/add-anniversary/add-anniversary.wxml -->
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-      <text class="back-text">返回</text>
-    </view>
-    <text class="title">{{isEditing ? '编辑纪念日' : '设为纪念日'}}</text>
-    <view class="placeholder"></view>
-  </view>
+  <page-header title="{{isEditing ? '编辑纪念日' : '设为纪念日'}}" />
 
   <!-- 纪念日名称 -->
   <view class="input-section">

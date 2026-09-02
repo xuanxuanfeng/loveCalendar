@@ -1,14 +1,6 @@
 <!-- pages/record-detail/record-detail.wxml -->
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-      <text class="back-text">返回</text>
-    </view>
-    <text class="title">记录详情</text>
-    <view class="placeholder"></view>
-  </view>
+  <page-header title="记录详情" />
 
   <!-- 记录内容 -->
   <view class="record-detail">

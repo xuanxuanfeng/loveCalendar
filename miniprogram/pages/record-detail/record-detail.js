@@ -182,9 +182,5 @@ Page({
         }
       }
     })
-  },
-
-  goBack() {
-    wx.navigateBack()
   }
 })

@@ -202,10 +202,5 @@ Page({
     } finally {
       this.setData({ isSaving: false });
     }
-  },
-
-  // 返回上一页
-  goBack() {
-    wx.navigateBack();
   }
 })

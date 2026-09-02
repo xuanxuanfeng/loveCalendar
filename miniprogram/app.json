@@ -23,5 +23,37 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#85C1DC",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "日历",
+        "iconPath": "images/tab/calendar.png",
+        "selectedIconPath": "images/tab/calendar-active.png"
+      },
+      {
+        "pagePath": "pages/kitchen/kitchen",
+        "text": "小厨房",
+        "iconPath": "images/tab/kitchen.png",
+        "selectedIconPath": "images/tab/kitchen-active.png"
+      },
+      {
+        "pagePath": "pages/anniversaries/anniversaries",
+        "text": "纪念日",
+        "iconPath": "images/tab/anniversary.png",
+        "selectedIconPath": "images/tab/anniversary-active.png"
+      },
+      {
+        "pagePath": "pages/couple-bind/couple-bind",
+        "text": "我们",
+        "iconPath": "images/tab/couple.png",
+        "selectedIconPath": "images/tab/couple-active.png"
+      }
+    ]
+  }
 } 

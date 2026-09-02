@@ -145,7 +145,7 @@ Page({
   },
 
   goToAnniversaries() {
-    wx.navigateTo({ url: '/pages/anniversaries/anniversaries' });
+    wx.switchTab({ url: '/pages/anniversaries/anniversaries' });
   },
 
   viewAnniversaryDetail(e) {
@@ -162,6 +162,6 @@ Page({
   },
 
   goToCoupleBind() {
-    wx.navigateTo({ url: '/pages/couple-bind/couple-bind' });
+    wx.switchTab({ url: '/pages/couple-bind/couple-bind' });
   }
 })

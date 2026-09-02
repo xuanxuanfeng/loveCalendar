@@ -33,9 +33,5 @@ Page({
       wx.showToast({ title: '加载失败', icon: 'none' })
       this.setData({ loading: false })
     }
-  },
-
-  goBack() {
-    wx.navigateBack()
   }
 })

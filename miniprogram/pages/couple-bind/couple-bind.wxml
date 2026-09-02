@@ -2,8 +2,20 @@
 <view class="container">
   <!-- 页面标题 -->
   <view class="header">
-    <text class="title">情侣绑定</text>
+    <text class="title">我们</text>
     <text class="subtitle">与您的另一半建立专属连接</text>
+  </view>
+
+  <!-- 分享卡片邀请入口 -->
+  <view class="invite-banner" wx:if="{{inviteFromOpenId && !coupleStatus.hasCouple}}">
+    <view class="invite-content">
+      <text class="invite-emoji">💌</text>
+      <text class="invite-text">有人邀请你成为 TA 的另一半</text>
+    </view>
+    <view class="invite-actions">
+      <button class="invite-dismiss" bindtap="dismissInvite">稍后再说</button>
+      <button class="invite-accept" bindtap="handleInviteAccept">接受邀请</button>
+    </view>
   </view>
 
   <!-- 绑定状态卡片 -->
@@ -20,6 +32,22 @@
 
   <!-- 绑定操作卡片 -->
   <view class="action-card" wx:if="{{!coupleStatus.hasCouple}}">
+    <!-- 分享邀请 -->
+    <view class="invite-section">
+      <text class="invite-label">邀请另一半</text>
+      <text class="invite-desc">将小程序分享给 TA，TA 点击即可建立绑定</text>
+      <button class="share-btn" open-type="share">
+        <text class="share-icon">💕</text>
+        <text class="share-text">发送邀请</text>
+      </button>
+    </view>
+
+    <view class="divider">
+      <view class="divider-line"></view>
+      <text class="divider-text">或使用 OpenID</text>
+      <view class="divider-line"></view>
+    </view>
+
     <!-- 自己的 OpenID -->
     <view class="openid-info">
       <text class="info-label">我的 OpenID：</text>
@@ -61,7 +89,7 @@
           <view class="request-item">
             <view class="request-info">
               <text class="request-text">来自 {{item.senderNickname || '用户'}} 的绑定请求</text>
-              <text class="request-time">{{formatTime(item.createdAt)}}</text>
+              <text class="request-time">{{item.displayTime}}</text>
             </view>
             <view class="request-actions">
               <button class="btn btn-reject" bindtap="handleReject" data-request-id="{{item._id}}">拒绝</button>
@@ -82,7 +110,7 @@
           <view class="request-item">
             <view class="request-info">
               <text class="request-text">发送给 {{item.targetNickname || '用户'}} 的绑定请求</text>
-              <text class="request-time">{{formatTime(item.createdAt)}}</text>
+              <text class="request-time">{{item.displayTime}}</text>
             </view>
             <view class="request-actions">
               <button class="btn btn-cancel" bindtap="handleCancel" data-request-id="{{item._id}}">取消</button>
@@ -97,15 +125,15 @@
   <view class="instructions">
     <view class="instruction-item">
       <text class="instruction-icon">1.</text>
-      <text class="instruction-text">点击上方 OpenID 复制你的 OpenID 给对方</text>
+      <text class="instruction-text">点击「发送邀请」将小程序分享给对方</text>
     </view>
     <view class="instruction-item">
       <text class="instruction-icon">2.</text>
-      <text class="instruction-text">输入对方的 OpenID，发送绑定请求</text>
+      <text class="instruction-text">对方打开分享卡片即可看到绑定邀请</text>
     </view>
     <view class="instruction-item">
       <text class="instruction-icon">3.</text>
-      <text class="instruction-text">对方需要在小程序中接受您的请求</text>
+      <text class="instruction-text">双方确认后自动建立情侣关系</text>
     </view>
     <view class="instruction-item">
       <text class="instruction-icon">4.</text>

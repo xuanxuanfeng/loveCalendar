@@ -1,28 +1,40 @@
 // pages/couple-bind/couple-bind.js
 Page({
   data: {
-    myOpenId: '', // 自己的 OpenID
-    partnerOpenId: '', // 对方 OpenID
+    myOpenId: '',
+    partnerOpenId: '',
     coupleStatus: {
       hasCouple: false,
       partnerNickname: ''
     },
-    incomingRequests: [], // 收到的请求
-    outgoingRequests: [], // 发出的请求
-    hasRequests: false
+    incomingRequests: [],
+    outgoingRequests: [],
+    hasRequests: false,
+    inviteFromOpenId: ''
   },
 
-  onLoad() {
+  onLoad(options) {
     this.loadMyOpenId();
     this.loadCoupleStatus();
     this.loadRequests();
+
+    if (options.fromOpenId) {
+      this.setData({ inviteFromOpenId: options.fromOpenId });
+    }
   },
 
   onShow() {
-    // 页面显示时重新加载状态
     this.loadMyOpenId();
     this.loadCoupleStatus();
     this.loadRequests();
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '来和我一起记录美好时光吧！',
+      path: `/pages/couple-bind/couple-bind?fromOpenId=${this.data.myOpenId}`,
+      imageUrl: '/images/tab/couple-active.png'
+    };
   },
 
   // 加载自己的 OpenID
@@ -443,7 +455,47 @@ Page({
     });
   },
 
-  // 格式化时间显示
+  async handleInviteAccept() {
+    const fromOpenId = this.data.inviteFromOpenId;
+    if (!fromOpenId) return;
+
+    wx.showLoading({ title: '处理中...' });
+
+    try {
+      const result = await wx.cloud.callFunction({
+        name: 'handleCoupleRequest',
+        data: {
+          action: 'sendRequest',
+          targetOpenid: fromOpenId
+        }
+      });
+
+      if (result.result.success) {
+        if (result.result.message === 'Couple relationship established') {
+          wx.showToast({ title: '绑定成功！', icon: 'success' });
+        } else {
+          wx.showToast({ title: '请求已发送', icon: 'success' });
+        }
+        this.setData({ inviteFromOpenId: '' });
+        setTimeout(() => {
+          this.loadCoupleStatus();
+          this.loadRequests();
+        }, 1000);
+      } else {
+        wx.showToast({ title: result.result.error || '操作失败', icon: 'error' });
+      }
+    } catch (error) {
+      console.error('接受邀请失败:', error);
+      wx.showToast({ title: '操作失败', icon: 'error' });
+    } finally {
+      wx.hideLoading();
+    }
+  },
+
+  dismissInvite() {
+    this.setData({ inviteFromOpenId: '' });
+  },
+
   formatTime(timestamp) {
     if (!timestamp) return '';
 

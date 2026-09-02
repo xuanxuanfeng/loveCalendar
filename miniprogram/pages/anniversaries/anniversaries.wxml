@@ -1,15 +1,5 @@
 <!-- pages/anniversaries/anniversaries.wxml -->
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="header">
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-      <text class="back-text">返回</text>
-    </view>
-    <text class="title">纪念日列表</text>
-    <view class="placeholder"></view>
-  </view>
-
   <!-- 添加纪念日按钮 -->
   <view class="add-section">
     <button class="add-btn" bindtap="addAnniversary">

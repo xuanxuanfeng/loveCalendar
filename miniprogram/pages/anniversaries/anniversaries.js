@@ -96,9 +96,5 @@ Page({
         }
       }
     });
-  },
-
-  goBack() {
-    wx.navigateBack();
   }
 })

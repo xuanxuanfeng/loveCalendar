@@ -1,4 +1,7 @@
 {
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header"
+  },
   "navigationBarTitleText": "日期详情",
   "navigationBarBackgroundColor": "#FFFFFF",
   "navigationBarTextStyle": "black"
