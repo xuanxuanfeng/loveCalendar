@@ -16,7 +16,7 @@
     <view class="result-candidates">
       <view class="result-candidate" wx:for="{{todayMenu.candidates}}" wx:key="dishId">
         <view class="candidate-info">
-          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="result-img" mode="aspectFill" />
+          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="result-img" mode="aspectFill" lazy-load />
           <view wx:else class="result-img-placeholder">🍴</view>
           <text class="result-candidate-name">{{item.dishName}}</text>
         </view>

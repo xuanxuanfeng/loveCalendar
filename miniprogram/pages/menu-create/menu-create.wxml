@@ -35,7 +35,7 @@
 
     <view wx:else class="candidates-list">
       <view class="candidate-item" wx:for="{{selectedCandidates}}" wx:key="dishId">
-        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" />
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" lazy-load />
         <view wx:else class="candidate-img-placeholder">🍴</view>
         <text class="candidate-name">{{item.dishName}}</text>
         <view class="candidate-remove" bindtap="removeCandidate" data-index="{{index}}">×</view>

@@ -1,5 +1,11 @@
 <!-- pages/kitchen/kitchen.wxml -->
 <view class="container">
+  <!-- 离线提示 -->
+  <view class="offline-banner" wx:if="{{isOffline}}">
+    <text class="offline-icon">📡</text>
+    <text class="offline-text">网络不可用，当前显示缓存数据</text>
+  </view>
+
   <!-- 今日菜单区域 -->
   <view class="section today-menu">
     <view class="section-title">
@@ -18,7 +24,7 @@
         bindtap="toggleCandidate"
         data-dishid="{{item.dishId}}"
       >
-        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" />
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="candidate-img" mode="aspectFill" lazy-load />
         <view wx:else class="candidate-img-placeholder">🍴</view>
         <text class="candidate-name">{{item.dishName}}</text>
         <view class="candidate-check {{selectedDishIds.indexOf(item.dishId) !== -1 ? 'checked' : ''}}">
@@ -82,7 +88,7 @@
     </view>
     <view wx:else class="dish-preview-list">
       <view class="dish-preview-item" wx:for="{{myDishes}}" wx:key="_id" bindtap="goDishDetail" data-id="{{item._id}}">
-        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="dish-preview-img" mode="aspectFill" />
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="dish-preview-img" mode="aspectFill" lazy-load />
         <view wx:else class="dish-preview-img-placeholder">🍴</view>
         <view class="dish-preview-info">
           <text class="dish-preview-name">{{item.name}}</text>

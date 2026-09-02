@@ -8,6 +8,8 @@ const MEAL_TYPE_MAP = {
   snack: '小吃'
 }
 
+const CACHE_KEY_DISHES = 'cache_my_dishes'
+
 Page({
   data: {
     todayMenu: null,
@@ -18,11 +20,27 @@ Page({
     decidedDishName: '',
     myDishes: [],
     myDishCount: 0,
-    history: []
+    history: [],
+    isOffline: false
   },
 
   onShow() {
+    this.loadCachedDishes();
     this.loadData()
+  },
+
+  loadCachedDishes() {
+    try {
+      const cached = wx.getStorageSync(CACHE_KEY_DISHES);
+      if (cached) {
+        this.setData({
+          myDishes: cached.myDishes || [],
+          myDishCount: cached.myDishCount || 0
+        });
+      }
+    } catch (e) {
+      console.error('读取菜品缓存失败:', e);
+    }
   },
 
   async loadData() {
@@ -69,13 +87,18 @@ Page({
     try {
       const res = await callCloud('getDishes', { onlyMine: true, pageSize: 5 })
       if (res.success) {
-        this.setData({
-          myDishes: res.data || [],
-          myDishCount: res.total || 0
-        })
+        const myDishes = res.data || []
+        const myDishCount = res.total || 0
+        this.setData({ myDishes, myDishCount, isOffline: false })
+        try {
+          wx.setStorageSync(CACHE_KEY_DISHES, { myDishes, myDishCount })
+        } catch (e) {
+          console.error('缓存菜品数据失败:', e)
+        }
       }
     } catch (err) {
       console.error('加载我的菜品失败:', err)
+      this.setData({ isOffline: true })
     }
   },
 

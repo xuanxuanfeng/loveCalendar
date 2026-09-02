@@ -33,10 +33,11 @@
           
           <view wx:if="{{item.images && item.images.length > 0}}" class="record-images">
             <block wx:for="{{item.images}}" wx:key="index">
-              <image 
-                src="{{item}}" 
-                class="record-image" 
+              <image
+                src="{{item}}"
+                class="record-image"
                 mode="aspectFill"
+                lazy-load
                 bindtap="previewImage"
                 data-images="{{item.images}}"
                 data-current="{{index}}"

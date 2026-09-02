@@ -1,5 +1,11 @@
 <!-- pages/index/index.wxml -->
 <view class="container">
+  <!-- 离线提示 -->
+  <view class="offline-banner" wx:if="{{isOffline}}">
+    <text class="offline-icon">📡</text>
+    <text class="offline-text">网络不可用，当前显示缓存数据</text>
+  </view>
+
   <!-- 顶部标题 -->
   <view class="header">
     <text class="title">情侣纪念日</text>

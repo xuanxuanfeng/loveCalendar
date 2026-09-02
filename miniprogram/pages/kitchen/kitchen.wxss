@@ -1,4 +1,24 @@
 /* pages/kitchen/kitchen.wxss */
+.offline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background: #FFF3CD;
+  color: #856404;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.offline-icon {
+  font-size: 28rpx;
+}
+
+.offline-text {
+  font-size: 24rpx;
+}
+
 .container {
   min-height: 100vh;
   background: linear-gradient(135deg, #FFF5F5 0%, #FFECEC 50%, #FFE0E0 100%);

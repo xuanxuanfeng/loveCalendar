@@ -28,10 +28,11 @@
     <!-- 图片区域 -->
     <view wx:if="{{record.images && record.images.length > 0}}" class="record-images">
       <block wx:for="{{record.images}}" wx:key="index">
-        <image 
-          src="{{item}}" 
-          class="detail-image" 
+        <image
+          src="{{item}}"
+          class="detail-image"
           mode="aspectFit"
+          lazy-load
           bindtap="previewImage"
           data-images="{{record.images}}"
           data-current="{{index}}"

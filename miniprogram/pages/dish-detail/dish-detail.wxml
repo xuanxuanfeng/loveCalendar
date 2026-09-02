@@ -7,7 +7,7 @@
   <block wx:else>
     <!-- 菜品图片 -->
     <view class="dish-hero">
-      <image wx:if="{{dish.imageUrl}}" src="{{dish.imageUrl}}" class="hero-img" mode="aspectFill" />
+      <image wx:if="{{dish.imageUrl}}" src="{{dish.imageUrl}}" class="hero-img" mode="aspectFill" lazy-load />
       <view wx:else class="hero-placeholder">
         <text class="hero-emoji">🍴</text>
       </view>

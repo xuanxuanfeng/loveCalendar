@@ -2,6 +2,9 @@
 const { getTodayStr, formatDisplayDate, getFirstDayOfMonth, getLastDayOfMonth } = require('../../utils/date')
 const { calculateCountdown } = require('../../utils/countdown')
 
+const CACHE_KEY_CALENDAR = 'cache_calendar'
+const CACHE_KEY_ANNIVERSARIES = 'cache_anniversaries'
+
 Page({
   data: {
     currentDate: getTodayStr(),
@@ -9,10 +12,12 @@ Page({
     anniversariesMap: {},
     recentAnniversaries: [],
     userInfo: null,
-    hasCouple: false
+    hasCouple: false,
+    isOffline: false
   },
 
   onLoad() {
+    this.loadCachedData();
     this.loadCalendarData();
     this.checkCoupleStatus();
   },
@@ -23,8 +28,43 @@ Page({
   },
 
   onUserLogin() {
+    this.loadCachedData();
     this.loadCalendarData();
     this.checkCoupleStatus();
+  },
+
+  loadCachedData() {
+    try {
+      const calendar = wx.getStorageSync(CACHE_KEY_CALENDAR);
+      if (calendar) {
+        this.setData({
+          recordsMap: calendar.recordsMap || {},
+          anniversariesMap: calendar.anniversariesMap || {}
+        });
+      }
+      const anniversaries = wx.getStorageSync(CACHE_KEY_ANNIVERSARIES);
+      if (anniversaries) {
+        this.setData({ recentAnniversaries: anniversaries });
+      }
+    } catch (e) {
+      console.error('读取缓存失败:', e);
+    }
+  },
+
+  saveCalendarCache(recordsMap, anniversariesMap) {
+    try {
+      wx.setStorageSync(CACHE_KEY_CALENDAR, { recordsMap, anniversariesMap });
+    } catch (e) {
+      console.error('缓存日历数据失败:', e);
+    }
+  },
+
+  saveAnniversariesCache(anniversaries) {
+    try {
+      wx.setStorageSync(CACHE_KEY_ANNIVERSARIES, anniversaries);
+    } catch (e) {
+      console.error('缓存纪念日数据失败:', e);
+    }
   },
 
   // 检查情侣状态
@@ -65,21 +105,26 @@ Page({
       });
 
       if (calendarResult.result.success) {
+        const recordsMap = calendarResult.result.recordsByDate;
+        const anniversariesMap = calendarResult.result.anniversariesByDate;
         this.setData({
-          recordsMap: calendarResult.result.recordsByDate,
-          anniversariesMap: calendarResult.result.anniversariesByDate
+          recordsMap,
+          anniversariesMap,
+          isOffline: false
         });
 
         if (calendarResult.result.hasCouple !== undefined) {
           this.setData({ hasCouple: calendarResult.result.hasCouple });
         }
 
+        this.saveCalendarCache(recordsMap, anniversariesMap);
         this.loadRecentAnniversaries();
       } else {
         console.error('获取日历数据失败:', calendarResult.result.error);
       }
     } catch (error) {
       console.error('加载日历数据失败:', error);
+      this.setData({ isOffline: true });
     }
   },
 
@@ -110,9 +155,11 @@ Page({
           return getDays(a.countdownText) - getDays(b.countdownText);
         });
 
+        const topAnniversaries = sortedAnniversaries.slice(0, 3);
         this.setData({
-          recentAnniversaries: sortedAnniversaries.slice(0, 3)
+          recentAnniversaries: topAnniversaries
         });
+        this.saveAnniversariesCache(topAnniversaries);
       }
     } catch (error) {
       console.error('加载最近纪念日失败:', error);

@@ -89,10 +89,14 @@ Page({
         sizeType: ['compressed']
       })
       const tempFilePath = res.tempFiles[0].tempFilePath
+      const compressRes = await wx.compressImage({
+        src: tempFilePath,
+        quality: 60
+      })
       wx.showLoading({ title: '上传中...' })
       const uploadRes = await wx.cloud.uploadFile({
         cloudPath: `dishes/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`,
-        filePath: tempFilePath
+        filePath: compressRes.tempFilePath
       })
       wx.hideLoading()
       this.setData({ imageUrl: uploadRes.fileID })

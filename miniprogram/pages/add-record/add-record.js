@@ -158,10 +158,14 @@ Page({
           mask: true
         });
 
-        // 上传到云存储
+        const compressRes = await wx.compressImage({
+          src: image.localPath,
+          quality: 60
+        });
+
         const result = await wx.cloud.uploadFile({
           cloudPath: `records/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.jpg`,
-          filePath: image.localPath
+          filePath: compressRes.tempFilePath
         });
 
         uploadedUrls.push(result.fileID);
