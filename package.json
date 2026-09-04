@@ -5,7 +5,28 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "projects": [
+      {
+        "displayName": "component",
+        "testEnvironment": "jsdom",
+        "testMatch": [
+          "<rootDir>/miniprogram/__tests__/components/**/*.test.js"
+        ]
+      },
+      {
+        "displayName": "unit",
+        "testEnvironment": "node",
+        "testMatch": [
+          "<rootDir>/miniprogram/__tests__/utils/**/*.test.js",
+          "<rootDir>/cloudfunctions/__tests__/**/*.test.js"
+        ]
+      }
+    ]
+  },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.5.1",
+    "miniprogram-simulate": "^1.6.2"
   }
 }
