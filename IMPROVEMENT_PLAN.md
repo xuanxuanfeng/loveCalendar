@@ -10,7 +10,7 @@
 
 ### 任务
 
-- [ ] 在项目根目录创建 `AGENTS.md`，包含：
+- [x] 在项目根目录创建 `AGENTS.md`，包含：
   - 项目概述：情侣纪念日微信小程序
   - 技术栈：微信小程序原生 + 云开发（环境 ID `dev-5gu57acl6acc6a6b`）
   - 模块边界：`miniprogram/` 前端 vs `cloudfunctions/` 后端
@@ -18,7 +18,7 @@
   - 高风险文件路由：`index.js`、`calendar` 组件、`cloud.js`
   - 数据库集合名：`users`、`records`、`anniversaries`、`couples`、`coupleRequests`
   - 关键约定：图片上限 9 张、内容 1000 字、名称 50 字
-- [ ] 在 `cloudfunctions/` 下创建 `AGENTS.md`，列出 30 个云函数的职责分组
+- [x] 在 `cloudfunctions/` 下创建 `AGENTS.md`，列出 30 个云函数的职责分组
 
 ### 验收
 
@@ -32,7 +32,7 @@
 
 ### 任务
 
-- [ ] 在 `miniprogram/` 下建立测试目录结构
+- [x] 在 `miniprogram/` 下建立测试目录结构
   ```
   miniprogram/__tests__/
     pages/
@@ -45,14 +45,14 @@
       countdown.test.js
       validator.test.js
   ```
-- [ ] 选择测试框架（推荐 miniprogram-simulate + jest）
-- [ ] 编写第一批测试，覆盖核心数据流：
+- [x] 选择测试框架（推荐 miniprogram-simulate + jest）
+- [x] 编写第一批测试，覆盖核心数据流：
   - `utils/date.js` — 日期格式化、月份计算
   - `utils/countdown.js` — 倒计时计算
   - `utils/validator.js` — 字段校验
   - `pages/index/index.js` — 数据加载、月份切换
   - `components/calendar/calendar.js` — 日期渲染、点击事件
-- [ ] 在 `package.json` 中添加 `test` 脚本
+- [x] 在 `package.json` 中添加 `test` 脚本
 
 ### 验收
 
@@ -67,20 +67,20 @@
 
 ### 任务
 
-- [ ] 提取 `createRecord` / `updateRecord` 的共同字段校验到共享模块
+- [x] 提取 `createRecord` / `updateRecord` 的共同字段校验到共享模块
   ```
   cloudfunctions/shared/validators/record.js
   ```
-- [ ] 提取 `createAnniversary` / `updateAnniversary` 的共同校验
+- [x] 提取 `createAnniversary` / `updateAnniversary` 的共同校验
   ```
   cloudfunctions/shared/validators/anniversary.js
   ```
-- [ ] 提取 `createDish` / `updateDish` 的共同校验
+- [x] 提取 `createDish` / `updateDish` 的共同校验
   ```
   cloudfunctions/shared/validators/dish.js
   ```
-- [ ] 各 create/update 云函数引用共享校验模块，删除重复逻辑
-- [ ] 为共享校验模块编写单元测试
+- [x] 各 create/update 云函数引用共享校验模块，删除重复逻辑
+- [x] 为共享校验模块编写单元测试
 
 ### 验收
 
@@ -95,16 +95,16 @@
 
 ### 任务
 
-- [ ] 在 `miniprogram/components/calendar/` 下创建 `README.md`，文档化：
+- [x] 在 `miniprogram/components/calendar/` 下创建 `README.md`，文档化：
   - 组件 properties（输入）
   - 组件 triggers/events（输出）
   - 使用示例
-- [ ] 编写组件级测试（阶段 2 基础设施上），覆盖：
+- [x] 编写组件级测试（阶段 2 基础设施上），覆盖：
   - 日期渲染正确性
   - 点击事件传递
   - 月份切换边界（跨年、跨月）
   - properties 变更后的重新渲染
-- [ ] 梳理所有消费 calendar 组件的页面，确认接口一致性
+- [x] 梳理所有消费 calendar 组件的页面，确认接口一致性
 
 ### 验收
 
@@ -119,13 +119,13 @@
 
 ### 任务
 
-- [ ] 在项目根目录创建 `docs/setup.md`，包含：
+- [x] 在项目根目录创建 `docs/setup.md`，包含：
   - 微信开发者工具安装与配置
   - 云环境初始化（环境 ID、开通服务）
   - 数据库集合创建与权限规则（引用 `database-rules.json`）
   - 云函数部署命令（逐个或批量）
   - 测试数据初始化方法
-- [ ] 可选：创建 `scripts/deploy.sh` 批量部署云函数脚本
+- [x] 可选：创建 `scripts/deploy.sh` 批量部署云函数脚本
 
 ### 验收
 
