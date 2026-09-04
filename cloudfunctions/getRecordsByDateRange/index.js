@@ -6,20 +6,17 @@ cloud.init({
 
 const db = cloud.database()
 const _ = db.command
-
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+const { validateDate } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { startDate, endDate } = event
 
   try {
-    if (!startDate || !DATE_REGEX.test(startDate)) {
-      return { success: false, error: '开始日期格式无效' }
-    }
-    if (!endDate || !DATE_REGEX.test(endDate)) {
-      return { success: false, error: '结束日期格式无效' }
-    }
+    const startErr = validateDate(startDate)
+    if (startErr) return { success: false, error: '开始日期格式无效' }
+    const endErr = validateDate(endDate)
+    if (endErr) return { success: false, error: '结束日期格式无效' }
 
     // 检查是否有情侣关系（查询 user1Openid 或 user2Openid 包含当前用户的记录）
     const coupleResult = await db.collection('couples').where({

@@ -3,10 +3,7 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
-
-const NAME_REGEX = /^[\u4e00-\u9fa5a-zA-Z0-9\s]{1,30}$/
-const CATEGORIES = ['家常菜', '硬菜', '汤', '主食', '小吃', '饮品']
-const DIFFICULTIES = ['easy', 'medium', 'hard']
+const { validateDishName, validateDishCategory, validateDishDifficulty } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -15,14 +12,17 @@ exports.main = async (event, context) => {
   if (!dishId || typeof dishId !== 'string') {
     return { success: false, error: '菜品ID不合法' }
   }
-  if (name !== undefined && (typeof name !== 'string' || !NAME_REGEX.test(name.trim()))) {
-    return { success: false, error: '菜品名称不合法' }
+  if (name !== undefined) {
+    const nameErr = validateDishName(name)
+    if (nameErr) return { success: false, error: nameErr }
   }
-  if (category !== undefined && !CATEGORIES.includes(category)) {
-    return { success: false, error: '分类不合法' }
+  if (category !== undefined) {
+    const catErr = validateDishCategory(category)
+    if (catErr) return { success: false, error: catErr }
   }
-  if (difficulty !== undefined && !DIFFICULTIES.includes(difficulty)) {
-    return { success: false, error: '难度不合法' }
+  if (difficulty !== undefined) {
+    const diffErr = validateDishDifficulty(difficulty)
+    if (diffErr) return { success: false, error: diffErr }
   }
 
   try {

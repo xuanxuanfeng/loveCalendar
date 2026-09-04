@@ -3,24 +3,21 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
-
-const NAME_REGEX = /^[\u4e00-\u9fa5a-zA-Z0-9\s]{1,30}$/
-const CATEGORIES = ['家常菜', '硬菜', '汤', '主食', '小吃', '饮品']
-const DIFFICULTIES = ['easy', 'medium', 'hard']
+const { validateDishName, validateDishCategory, validateDishDifficulty, validateCloudUrl } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { name, description, category, tags, imageUrl, difficulty, estimatedTime, ingredients } = event
 
-  if (!name || typeof name !== 'string' || !NAME_REGEX.test(name.trim())) {
-    return { success: false, error: '菜品名称不合法（1-30字，仅中英文数字）' }
-  }
-  if (!category || !CATEGORIES.includes(category)) {
-    return { success: false, error: '分类不合法' }
-  }
-  if (difficulty && !DIFFICULTIES.includes(difficulty)) {
-    return { success: false, error: '难度不合法' }
-  }
+  const nameErr = validateDishName(name)
+  if (nameErr) return { success: false, error: nameErr }
+
+  const catErr = validateDishCategory(category)
+  if (catErr) return { success: false, error: catErr }
+
+  const diffErr = validateDishDifficulty(difficulty)
+  if (diffErr) return { success: false, error: diffErr }
+
   if (estimatedTime !== undefined && (typeof estimatedTime !== 'number' || estimatedTime < 0 || estimatedTime > 999)) {
     return { success: false, error: '预估时间不合法（0-999分钟）' }
   }
@@ -33,8 +30,9 @@ exports.main = async (event, context) => {
   if (tags && (!Array.isArray(tags) || tags.length > 5 || tags.some(t => typeof t !== 'string' || t.length > 10))) {
     return { success: false, error: '标签不合法（最多5个，每个10字内）' }
   }
-  if (imageUrl && (typeof imageUrl !== 'string' || !imageUrl.startsWith('cloud://'))) {
-    return { success: false, error: '图片地址不合法' }
+  if (imageUrl) {
+    const urlErr = validateCloudUrl(imageUrl)
+    if (urlErr) return { success: false, error: urlErr }
   }
 
   try {

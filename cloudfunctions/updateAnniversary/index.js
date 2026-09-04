@@ -6,10 +6,7 @@ cloud.init({
 
 const db = cloud.database()
 const _ = db.command
-
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
-const MAX_NAME_LENGTH = 50
-const MAX_COUNTDOWN_DAYS = 20
+const { validateDate, validateAnniversaryFields } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -20,29 +17,11 @@ exports.main = async (event, context) => {
       return { success: false, error: '纪念日 ID 无效' }
     }
 
-    if (!name || typeof name !== 'string' || !name.trim()) {
-      return { success: false, error: '纪念日名称不能为空' }
-    }
+    const annErr = validateAnniversaryFields(name, countdownDays, isCountdownMode)
+    if (annErr) return { success: false, error: annErr }
 
-    if (name.trim().length > MAX_NAME_LENGTH) {
-      return { success: false, error: `名称不能超过${MAX_NAME_LENGTH}字` }
-    }
-
-    if (!date || !DATE_REGEX.test(date)) {
-      return { success: false, error: '日期格式无效，应为 YYYY-MM-DD' }
-    }
-
-    if (isCountdownMode && countdownDays) {
-      if (!Array.isArray(countdownDays) || countdownDays.length > MAX_COUNTDOWN_DAYS) {
-        return { success: false, error: `倒数日数量不能超过${MAX_COUNTDOWN_DAYS}个` }
-      }
-      for (const d of countdownDays) {
-        const num = parseInt(d)
-        if (isNaN(num) || num < 1) {
-          return { success: false, error: '倒数日天数必须为正整数' }
-        }
-      }
-    }
+    const dateErr = validateDate(date)
+    if (dateErr) return { success: false, error: dateErr }
 
     const existingAnniversary = await db.collection('anniversaries').doc(anniversaryId).get()
 

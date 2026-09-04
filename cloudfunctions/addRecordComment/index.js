@@ -5,8 +5,7 @@ cloud.init({
 })
 
 const db = cloud.database()
-
-const MAX_COMMENT_LENGTH = 500
+const { validateCommentContent } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -17,13 +16,8 @@ exports.main = async (event, context) => {
       return { success: false, error: '记录 ID 无效' }
     }
 
-    if (!content || typeof content !== 'string' || !content.trim()) {
-      return { success: false, error: '评论内容不能为空' }
-    }
-
-    if (content.trim().length > MAX_COMMENT_LENGTH) {
-      return { success: false, error: `评论不能超过${MAX_COMMENT_LENGTH}字` }
-    }
+    const commentErr = validateCommentContent(content)
+    if (commentErr) return { success: false, error: commentErr }
 
     // 验证记录存在且有访问权限
     const record = await db.collection('records').doc(recordId).get()

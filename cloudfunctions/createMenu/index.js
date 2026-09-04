@@ -3,17 +3,16 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
-
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
-const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack']
+const _ = db.command
+const { validateDate } = require('../shared/validators')
+const { MEAL_TYPES } = require('../shared/constants')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { date, mealType, candidates } = event
 
-  if (!date || typeof date !== 'string' || !DATE_REGEX.test(date)) {
-    return { success: false, error: '日期格式不合法' }
-  }
+  const dateErr = validateDate(date)
+  if (dateErr) return { success: false, error: '日期格式不合法' }
   if (!mealType || !MEAL_TYPES.includes(mealType)) {
     return { success: false, error: '餐次类型不合法' }
   }
