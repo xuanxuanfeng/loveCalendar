@@ -4,8 +4,9 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
 function isValidDate(dateStr) {
   if (!DATE_REGEX.test(dateStr)) return false
-  const date = new Date(dateStr)
-  return !isNaN(date.getTime())
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const date = new Date(y, m - 1, d)
+  return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d
 }
 
 function isValidContent(content, maxLen = 1000) {
