@@ -41,15 +41,13 @@ exports.main = async (event, context) => {
       date: dateObj
     }).orderBy('createdAt', 'desc').get()
 
-    // 去重：如果同一条记录在情侣双方都有，只保留一条
+    // 去重（按 _id，防止情侣查询中同一记录出现多次）
     const uniqueRecords = []
-    const seenContent = new Set()
+    const seenIds = new Set()
 
     for (const record of records.data) {
-      // 使用 content + date 作为唯一标识
-      const key = `${record.date}-${record.content}`
-      if (!seenContent.has(key)) {
-        seenContent.add(key)
+      if (!seenIds.has(record._id)) {
+        seenIds.add(record._id)
         uniqueRecords.push(record)
       }
     }

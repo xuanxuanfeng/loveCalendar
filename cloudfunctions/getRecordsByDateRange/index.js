@@ -44,14 +44,13 @@ exports.main = async (event, context) => {
       date: _.gte(startDateObj).and(_.lte(endDateObj))
     }).orderBy('date', 'desc').get()
 
-    // 去重
+    // 去重（按 _id，防止情侣查询中同一记录出现多次）
     const uniqueRecords = []
-    const seenContent = new Set()
+    const seenIds = new Set()
 
-    for (const record of records) {
-      const key = `${record.date}-${record.content}`
-      if (!seenContent.has(key)) {
-        seenContent.add(key)
+    for (const record of records.data) {
+      if (!seenIds.has(record._id)) {
+        seenIds.add(record._id)
         uniqueRecords.push(record)
       }
     }

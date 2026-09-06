@@ -51,8 +51,8 @@ exports.main = async (event, context) => {
     const recordsByDate = {}
     recordsResult.data.forEach(record => {
       // 将日期转换为本地格式字符串，确保时区正确
-      const date = new Date(record.date.getTime() + record.date.getTimezoneOffset() * 60000 + 8 * 3600000); // 转换为北京时间
-      const dateKey = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`;
+      const date = new Date(record.date.getTime() + record.date.getTimezoneOffset() * 60000 + 8 * 3600000) // 转换为北京时间
+      const dateKey = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`
       if (!recordsByDate[dateKey]) {
         recordsByDate[dateKey] = []
       }
@@ -69,8 +69,8 @@ exports.main = async (event, context) => {
     const anniversariesByDate = {}
     anniversariesResult.data.forEach(anniversary => {
       // 将日期转换为本地格式字符串，确保时区正确
-      const date = new Date(anniversary.date.getTime() + anniversary.date.getTimezoneOffset() * 60000 + 8 * 3600000); // 转换为北京时间
-      const dateKey = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`;
+      const date = new Date(anniversary.date.getTime() + anniversary.date.getTimezoneOffset() * 60000 + 8 * 3600000) // 转换为北京时间
+      const dateKey = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`
       if (!anniversariesByDate[dateKey]) {
         anniversariesByDate[dateKey] = []
       }

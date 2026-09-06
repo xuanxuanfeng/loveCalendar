@@ -33,19 +33,8 @@ exports.main = async (event, context) => {
       _openid: _.in(queryOpenids)
     }).orderBy('date', 'asc').get()
 
-    // 去重：相同名称的纪念日只保留一个
-    const seen = new Set()
-    const uniqueAnniversaries = []
-
-    for (const anniversary of result.data) {
-      if (!seen.has(anniversary.name)) {
-        seen.add(anniversary.name)
-        uniqueAnniversaries.push(anniversary)
-      }
-    }
-
     // 将日期转换为本地格式字符串
-    const anniversaries = uniqueAnniversaries.map(anniversary => {
+    const anniversaries = result.data.map(anniversary => {
       const date = new Date(anniversary.date.getTime() + anniversary.date.getTimezoneOffset() * 60000 + 8 * 3600000)
       return {
         ...anniversary,
