@@ -29,21 +29,6 @@ Page({
     }
   },
 
-  onShow() {
-    const pages = getCurrentPages()
-    const currentPage = pages[pages.length - 1]
-    if (currentPage.options && currentPage.options.refreshCandidates) {
-      try {
-        const eventChannel = this.getOpenerEventChannel()
-        if (eventChannel) {
-          eventChannel.on('selectedDishes', (data) => {
-            this.setData({ selectedCandidates: data })
-          })
-        }
-      } catch (e) {}
-    }
-  },
-
   onDateChange(e) {
     this.setData({ date: e.detail.value })
   },
@@ -60,7 +45,14 @@ Page({
   },
 
   goPickDishes() {
-    wx.navigateTo({ url: '/pages/dish-list/dish-list?pickMode=1' })
+    wx.navigateTo({
+      url: '/pages/dish-list/dish-list?pickMode=1',
+      events: {
+        selectedDishes: (data) => {
+          this.setData({ selectedCandidates: data })
+        }
+      }
+    })
   },
 
   async submitMenu() {

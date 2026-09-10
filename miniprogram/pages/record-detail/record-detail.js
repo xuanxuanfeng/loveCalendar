@@ -10,12 +10,16 @@ Page({
     displayLastEditedAt: '',
     lastEditedByName: '',
     comments: [],
-    newComment: ''
+    newComment: '',
+    myOpenid: ''
   },
 
   onLoad(options) {
     const recordId = options.recordId
-    this.setData({ recordId })
+    this.setData({
+      recordId,
+      myOpenid: getApp().globalData.openid || ''
+    })
     this.loadRecordDetail(recordId)
     this.loadComments(recordId)
   },
@@ -63,20 +67,19 @@ Page({
         name: 'initUser',
         data: {}
       })
-      // 如果编辑者就是当前用户，显示"我"
       if (userResult.result.openid === openid) {
         this.setData({ lastEditedByName: '我' })
         return
       }
-      // 否则尝试从情侣信息获取
       const coupleResult = await wx.cloud.callFunction({
         name: 'manageCouple',
         data: { action: 'get' }
       })
       if (coupleResult.result.success) {
         const couple = coupleResult.result.coupleInfo
-        const partnerOpenid = couple.user1Openid === openid ? couple.user2Openid : couple.user1Openid
-        if (partnerOpenid === openid) {
+        const partnerOpenid = couple.user1Openid === userResult.result.openid
+          ? couple.user2Openid : couple.user1Openid
+        if (openid === partnerOpenid) {
           this.setData({ lastEditedByName: '对方' })
         }
       }
@@ -131,6 +134,31 @@ Page({
       console.error('提交评论失败:', error)
       wx.showToast({ title: '评论失败', icon: 'error' })
     }
+  },
+
+  deleteComment(e) {
+    const { commentId } = e.currentTarget.dataset
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条评论吗？',
+      success: async (res) => {
+        if (!res.confirm) return
+        try {
+          const result = await wx.cloud.callFunction({
+            name: 'deleteRecordComment',
+            data: { commentId }
+          })
+          if (result.result.success) {
+            this.loadComments()
+          } else {
+            wx.showToast({ title: result.result.error || '删除失败', icon: 'none' })
+          }
+        } catch (err) {
+          console.error('删除评论失败:', err)
+          wx.showToast({ title: '删除失败', icon: 'none' })
+        }
+      }
+    })
   },
 
   viewVersions() {

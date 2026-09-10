@@ -1,11 +1,12 @@
 const { callCloud } = require('../../utils/cloud')
-const { formatTime } = require('../../utils/date')
+const { formatDateTime } = require('../../utils/date')
 
 Page({
   data: {
     recordId: '',
     versions: [],
-    loading: true
+    loading: true,
+    activeVersion: null
   },
 
   onLoad(options) {
@@ -19,9 +20,9 @@ Page({
     try {
       const res = await callCloud('getRecordVersions', { recordId })
       if (res.success) {
-        const versions = (res.data || []).map(v => ({
+        const versions = (res.versions || []).map(v => ({
           ...v,
-          displayTime: formatTime(v.createdAt)
+          displayTime: formatDateTime(v.editedAt)
         }))
         this.setData({ versions, loading: false })
       } else {
@@ -33,5 +34,21 @@ Page({
       wx.showToast({ title: '加载失败', icon: 'none' })
       this.setData({ loading: false })
     }
-  }
+  },
+
+  viewVersion(e) {
+    const version = e.currentTarget.dataset.version
+    this.setData({ activeVersion: version })
+  },
+
+  closeVersion() {
+    this.setData({ activeVersion: null })
+  },
+
+  previewVersionImage(e) {
+    const { url, urls } = e.currentTarget.dataset
+    wx.previewImage({ current: url, urls })
+  },
+
+  preventBubble() {}
 })

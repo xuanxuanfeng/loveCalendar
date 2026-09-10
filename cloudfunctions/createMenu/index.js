@@ -16,8 +16,8 @@ exports.main = async (event, context) => {
   if (!mealType || !MEAL_TYPES.includes(mealType)) {
     return { success: false, error: '餐次类型不合法' }
   }
-  if (!Array.isArray(candidates) || candidates.length < 1 || candidates.length > 10) {
-    return { success: false, error: '候选菜品数量不合法（1-10个）' }
+  if (!Array.isArray(candidates) || candidates.length < 2 || candidates.length > 10) {
+    return { success: false, error: '候选菜品数量不合法（2-10个）' }
   }
 
   const cleanCandidates = []

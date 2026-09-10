@@ -21,10 +21,6 @@ Page({
 
   async loadDish(id) {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'getDishes',
-        data: { keyword: '', pageSize: 1 }
-      })
       const dishRes = await wx.cloud.database().collection('dishes').doc(id).get()
       if (dishRes.data) {
         const dish = dishRes.data

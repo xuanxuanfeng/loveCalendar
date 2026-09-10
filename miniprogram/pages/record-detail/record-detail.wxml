@@ -69,6 +69,8 @@
             <view class="comment-header">
               <text class="comment-author">{{item.authorNickname || '匿名'}}</text>
               <text class="comment-time">{{item.displayTime}}</text>
+              <text wx:if="{{item.authorOpenid === myOpenid}}" class="comment-delete"
+                catchtap="deleteComment" data-comment-id="{{item._id}}">删除</text>
             </view>
             <text class="comment-content">{{item.content}}</text>
           </view>

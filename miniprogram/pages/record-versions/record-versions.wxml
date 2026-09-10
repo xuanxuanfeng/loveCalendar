@@ -11,7 +11,8 @@
   </view>
 
   <view wx:else class="version-list">
-    <view class="version-item" wx:for="{{versions}}" wx:key="_id">
+    <view class="version-item" wx:for="{{versions}}" wx:key="_id"
+      bindtap="viewVersion" data-version="{{item}}">
       <view class="version-header">
         <view class="version-badge {{item.changeType === 'create' ? 'badge-create' : 'badge-edit'}}">
           v{{item.version}}
@@ -26,6 +27,45 @@
 
       <view wx:if="{{item.changeNote}}" class="version-note">
         <text>{{item.changeNote}}</text>
+      </view>
+
+      <view class="version-hint">
+        <text>点击查看内容</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版本内容弹窗 -->
+  <view wx:if="{{activeVersion}}" class="overlay" catchtap="closeVersion">
+    <view class="version-detail" catchtap="preventBubble">
+      <view class="detail-header">
+        <view class="detail-badge {{activeVersion.changeType === 'create' ? 'badge-create' : 'badge-edit'}}">
+          v{{activeVersion.version}}
+        </view>
+        <text class="detail-title">{{activeVersion.changeType === 'create' ? '创建' : '编辑'}} · {{activeVersion.displayTime}}</text>
+        <view class="detail-close" catchtap="closeVersion">✕</view>
+      </view>
+
+      <view class="detail-content">
+        <text class="detail-text">{{activeVersion.content || '无文字内容'}}</text>
+      </view>
+
+      <view wx:if="{{activeVersion.images && activeVersion.images.length > 0}}" class="detail-images">
+        <block wx:for="{{activeVersion.images}}" wx:key="index">
+          <image
+            src="{{item}}"
+            class="detail-image"
+            mode="aspectFit"
+            bindtap="previewVersionImage"
+            data-url="{{item}}"
+            data-urls="{{activeVersion.images}}"
+          />
+        </block>
+      </view>
+
+      <view wx:if="{{activeVersion.changeNote}}" class="detail-note">
+        <text class="note-label">备注：</text>
+        <text>{{activeVersion.changeNote}}</text>
       </view>
     </view>
   </view>

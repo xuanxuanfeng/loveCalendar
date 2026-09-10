@@ -1,17 +1,17 @@
 <!-- pages/dish-list/dish-list.wxml -->
-<view class="container">
+<view class="container {{pickMode ? 'pick-mode' : ''}}">
   <!-- 分类筛选 -->
   <scroll-view scroll-x class="category-bar">
-    <view 
-      class="category-tag {{activeCategory === '' ? 'active' : ''}}" 
-      bindtap="selectCategory" 
+    <view
+      class="category-tag {{activeCategory === '' ? 'active' : ''}}"
+      bindtap="selectCategory"
       data-category=""
     >全部</view>
-    <view 
-      class="category-tag {{activeCategory === item ? 'active' : ''}}" 
-      wx:for="{{categories}}" 
-      wx:key="*this" 
-      bindtap="selectCategory" 
+    <view
+      class="category-tag {{activeCategory === item ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="*this"
+      bindtap="selectCategory"
       data-category="{{item}}"
     >{{item}}</view>
   </scroll-view>
@@ -31,7 +31,7 @@
   </view>
 
   <view wx:else class="dish-grid">
-    <view class="dish-card" wx:for="{{dishes}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+    <view class="dish-card {{pickMode && selectedDishIds.indexOf(item._id) > -1 ? 'selected' : ''}}" wx:for="{{dishes}}" wx:key="_id" bindtap="{{pickMode ? 'toggleDishSelect' : 'goDetail'}}" data-id="{{item._id}}">
       <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" class="dish-card-img" mode="aspectFill" lazy-load />
       <view wx:else class="dish-card-img-placeholder">
         <text>🍴</text>
@@ -46,11 +46,20 @@
           <text class="tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
         </view>
       </view>
+      <view wx:if="{{pickMode}}" class="dish-check {{selectedDishIds.indexOf(item._id) > -1 ? 'checked' : ''}}">
+        <text wx:if="{{selectedDishIds.indexOf(item._id) > -1}}">✓</text>
+      </view>
     </view>
   </view>
 
   <!-- 加载更多 -->
-  <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMore">
+  <view wx:if="{{hasMore && !pickMode}}" class="load-more" bindtap="loadMore">
     <text>加载更多</text>
+  </view>
+
+  <!-- 选择模式底部确认栏 -->
+  <view wx:if="{{pickMode}}" class="pick-bar">
+    <text class="pick-count">已选 {{selectedDishIds.length}} 个</text>
+    <button class="pick-confirm-btn" bindtap="confirmSelection" disabled="{{selectedDishIds.length === 0}}">确认选择</button>
   </view>
 </view>

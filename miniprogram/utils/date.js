@@ -57,6 +57,16 @@ function formatTime(timeInput) {
   return `${hour}:${minute}`
 }
 
+function formatDateTime(timeInput) {
+  if (!timeInput) return ''
+  const date = new Date(timeInput)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours().toString().padStart(2, '0')
+  const minute = date.getMinutes().toString().padStart(2, '0')
+  return `${month}月${day}日 ${hour}:${minute}`
+}
+
 function getFirstDayOfMonth(year, month) {
   return `${year}-${String(month).padStart(2, '0')}-01`
 }
@@ -74,6 +84,7 @@ module.exports = {
   formatDisplayDateFull,
   formatDisplayDateWithWeekday,
   formatTime,
+  formatDateTime,
   getFirstDayOfMonth,
   getLastDayOfMonth
 }

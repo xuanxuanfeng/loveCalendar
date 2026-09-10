@@ -3,8 +3,10 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
+const _ = db.command
 
 exports.main = async (event, context) => {
+  const wxContext = cloud.getWXContext()
   const { page = 1, pageSize = 10 } = event
 
   if (page < 1 || pageSize < 1 || pageSize > 50) {
@@ -12,7 +14,24 @@ exports.main = async (event, context) => {
   }
 
   try {
-    const conditions = { status: 'decided' }
+    const coupleResult = await db.collection('couples').where({
+      $or: [
+        { user1Openid: wxContext.OPENID },
+        { user2Openid: wxContext.OPENID }
+      ],
+      isActive: true
+    }).get()
+
+    let queryOpenids = [wxContext.OPENID]
+    if (coupleResult.data.length > 0) {
+      const couple = coupleResult.data[0]
+      queryOpenids = [couple.user1Openid, couple.user2Openid]
+    }
+
+    const conditions = {
+      status: 'decided',
+      _openid: _.in(queryOpenids)
+    }
     const countResult = await db.collection('menus').where(conditions).count()
     const total = countResult.total
 

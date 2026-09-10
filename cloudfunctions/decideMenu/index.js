@@ -45,11 +45,9 @@ exports.main = async (event, context) => {
       }
     })
 
-    if (dishId !== 'random') {
-      await db.collection('dishes').where({ _id: dishId }).update({
-        data: { likeCount: _.inc(1) }
-      })
-    }
+    await db.collection('dishes').where({ _id: dishId }).update({
+      data: { likeCount: _.inc(1) }
+    })
 
     return { success: true }
   } catch (error) {

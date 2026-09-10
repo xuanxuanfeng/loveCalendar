@@ -130,3 +130,75 @@
   font-size: 14px;
   color: #85C1DC;
 }
+
+/* 选择模式 */
+.pick-mode {
+  padding-bottom: 70px;
+}
+
+.dish-card.selected {
+  border: 2px solid #85C1DC;
+  box-shadow: 0 2px 12px rgba(133, 193, 220, 0.3);
+}
+
+.dish-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  z-index: 1;
+}
+
+.dish-check.checked {
+  background: #85C1DC;
+  border-color: #85C1DC;
+}
+
+.dish-card {
+  position: relative;
+}
+
+.pick-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  background: white;
+  border-top: 1px solid #f0f0f0;
+  z-index: 100;
+}
+
+.pick-count {
+  font-size: 14px;
+  color: #666;
+}
+
+.pick-confirm-btn {
+  background: linear-gradient(135deg, #85C1DC 0%, #5D8CAE 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0 24px;
+  height: 36px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.pick-confirm-btn[disabled] {
+  background: #ccc;
+}
