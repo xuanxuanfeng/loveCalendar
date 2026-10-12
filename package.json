@@ -12,14 +12,14 @@
         "displayName": "component",
         "testEnvironment": "jsdom",
         "testMatch": [
-          "<rootDir>/miniprogram/__tests__/components/**/*.test.js"
+          "<rootDir>/tests/miniprogram/components/**/*.test.js"
         ]
       },
       {
         "displayName": "unit",
         "testEnvironment": "node",
         "testMatch": [
-          "<rootDir>/miniprogram/__tests__/utils/**/*.test.js",
+          "<rootDir>/tests/miniprogram/utils/**/*.test.js",
           "<rootDir>/cloudfunctions/__tests__/**/*.test.js"
         ],
         "moduleNameMapper": {

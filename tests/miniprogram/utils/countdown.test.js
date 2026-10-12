@@ -1,4 +1,4 @@
-const { calculateCountdown, getAllCountdowns } = require('../../utils/countdown')
+const { calculateCountdown, getAllCountdowns } = require('../../../miniprogram/utils/countdown')
 
 function daysFromNow(days) {
   const d = new Date()

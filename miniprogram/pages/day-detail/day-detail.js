@@ -120,6 +120,7 @@ Page({
 
   previewImage(e) {
     const { images, current } = e.currentTarget.dataset;
+    if (!Array.isArray(images) || !images.length || !images[current]) return;
     wx.previewImage({
       current: images[current],
       urls: images

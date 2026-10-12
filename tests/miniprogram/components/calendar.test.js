@@ -1,7 +1,7 @@
 const simulate = require('miniprogram-simulate')
 const path = require('path')
 
-const calendarId = simulate.load(path.resolve(__dirname, '../../components/calendar/calendar'))
+const calendarId = simulate.load(path.resolve(__dirname, '../../../miniprogram/components/calendar/calendar'))
 
 describe('calendar 组件', () => {
   test('加载组件成功', () => {

@@ -67,8 +67,8 @@ loveCalendar/
 │   ├── pages/                # 14 个页面
 │   ├── components/           # 3 个组件
 │   ├── utils/                # 工具（cloud.js, date.js, constants.js）
-│   ├── images/               # 静态资源
-│   └── __tests__/            # 前端测试
+│   └── images/               # 静态资源
+├── tests/miniprogram/        # 前端测试（位于小程序源码根目录之外）
 ├── cloudfunctions/           # 30 个云函数
 │   ├── shared/               # 共享校验模块
 │   └── AGENTS.md             # 云函数职责说明

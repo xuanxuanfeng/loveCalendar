@@ -18,29 +18,29 @@
 
   <!-- 记录列表 -->
   <view class="records-list">
-    <block wx:for="{{records}}" wx:key="id">
+    <block wx:for="{{records}}" wx:for-item="record" wx:key="_id">
       <view class="record-card">
         <view class="record-header">
-          <text class="record-time">{{item.displayTime}}</text>
+          <text class="record-time">{{record.displayTime}}</text>
           <view class="record-actions">
-            <text class="edit-btn" bindtap="editRecord" data-record="{{item}}">编辑</text>
-            <text class="delete-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</text>
+            <text class="edit-btn" bindtap="editRecord" data-record="{{record}}">编辑</text>
+            <text class="delete-btn" bindtap="deleteRecord" data-id="{{record._id}}">删除</text>
           </view>
         </view>
         
-        <view class="record-content" bindtap="viewRecordDetail" data-record="{{item}}">
-          <text class="record-text">{{item.content || '无文字内容'}}</text>
+        <view class="record-content" bindtap="viewRecordDetail" data-record="{{record}}">
+          <text class="record-text">{{record.content || '无文字内容'}}</text>
           
-          <view wx:if="{{item.images && item.images.length > 0}}" class="record-images">
-            <block wx:for="{{item.images}}" wx:key="index">
+          <view wx:if="{{record.images && record.images.length > 0}}" class="record-images">
+            <block wx:for="{{record.images}}" wx:for-item="image" wx:for-index="imageIndex" wx:key="*this">
               <image
-                src="{{item}}"
+                src="{{image}}"
                 class="record-image"
                 mode="aspectFill"
                 lazy-load
-                bindtap="previewImage"
-                data-images="{{item.images}}"
-                data-current="{{index}}"
+                catchtap="previewImage"
+                data-images="{{record.images}}"
+                data-current="{{imageIndex}}"
               />
             </block>
           </view>

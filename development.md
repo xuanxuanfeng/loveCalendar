@@ -20,7 +20,7 @@ npm install
 npm test
 
 # 运行单个测试文件
-npx jest miniprogram/__tests__/utils/date.test.js
+npx jest tests/miniprogram/utils/date.test.js
 
 # 运行指定测试（按名称匹配）
 npx jest -t "formatDate"

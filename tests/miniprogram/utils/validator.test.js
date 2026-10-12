@@ -1,4 +1,4 @@
-const { isValidDate, isValidContent, isValidImages, isValidName } = require('../../utils/validator')
+const { isValidDate, isValidContent, isValidImages, isValidName } = require('../../../miniprogram/utils/validator')
 
 describe('isValidDate', () => {
   test('合法日期通过', () => {

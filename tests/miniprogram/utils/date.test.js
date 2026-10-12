@@ -8,7 +8,7 @@ const {
   formatTime,
   getFirstDayOfMonth,
   getLastDayOfMonth
-} = require('../../utils/date')
+} = require('../../../miniprogram/utils/date')
 
 describe('formatDate', () => {
   test('格式化为 YYYY-MM-DD', () => {

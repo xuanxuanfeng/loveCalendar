@@ -32,9 +32,9 @@
 
 ### 任务
 
-- [x] 在 `miniprogram/` 下建立测试目录结构
+- [x] 建立前端测试目录结构（移至源码根目录外，避免微信保留目录提示）
   ```
-  miniprogram/__tests__/
+  tests/miniprogram/
     pages/
       index.test.js
       anniversaries.test.js
