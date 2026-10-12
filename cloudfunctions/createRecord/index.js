@@ -5,12 +5,11 @@ cloud.init({
 })
 
 const db = cloud.database()
-const _ = db.command
-const { validateDate, validateRecordFields } = require('../shared/validators')
+const { validateDate, validateRecordFields, validateRecordMetadata } = require('../shared/validators')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const { date, content, images } = event
+  const { date, content, images, title, tags } = event
 
   try {
     const dateErr = validateDate(date)
@@ -18,6 +17,8 @@ exports.main = async (event, context) => {
 
     const fieldsErr = validateRecordFields(content, images)
     if (fieldsErr) return { success: false, error: fieldsErr }
+    const metadataErr = validateRecordMetadata(title, tags)
+    if (metadataErr) return { success: false, error: metadataErr }
 
     if ((!content || !content.trim()) && (!images || images.length === 0)) {
       return { success: false, error: '请输入内容或添加图片' }
@@ -40,9 +41,11 @@ exports.main = async (event, context) => {
         authorOpenid: wxContext.OPENID,
         authorNickname,
         authorAvatar,
-        date: new Date(`${date}T00:00:00+08:00`),
+        date,
         content: content ? content.trim() : '',
         images: images || [],
+        title: title || '',
+        tags: tags || [],
         lastEditedBy: wxContext.OPENID,
         lastEditedAt: now,
         version: 1,
@@ -57,6 +60,9 @@ exports.main = async (event, context) => {
       data: {
         recordId: result._id,
         version: 1,
+        date,
+        title: title || '',
+        tags: tags || [],
         content: content ? content.trim() : '',
         images: images || [],
         editedBy: wxContext.OPENID,

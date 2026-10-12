@@ -204,7 +204,7 @@ describe('updateRecord', () => {
     expect(versionData.changeNote.length).toBe(100)
   })
 
-  test('清理被移除的旧图片', async () => {
+  test('历史版本引用的旧图片保留', async () => {
     const { main, mockCloud } = loadUpdateRecord()
     setOpenid(mockCloud, OWNER_OPENID)
     setupExistingRecord(mockCloud, { images: ['cloud://old1.png', 'cloud://old2.png'] })
@@ -217,8 +217,7 @@ describe('updateRecord', () => {
       images: ['cloud://old1.png'],
     }, {})
 
-    expect(mockCloud.deleteFile).toHaveBeenCalledTimes(1)
-    expect(mockCloud.deleteFile.mock.calls[0][0].fileList).toEqual(['cloud://old2.png'])
+    expect(mockCloud.deleteFile).not.toHaveBeenCalled()
   })
 
   test('无图片变更时不调用 deleteFile', async () => {

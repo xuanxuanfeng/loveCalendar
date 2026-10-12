@@ -1,4 +1,29 @@
 {
+  "recordVersions": {
+    "read": false,
+    "write": false,
+    "_comment": "仅云函数访问；函数验证本人或情侣关系。"
+  },
+  "recordComments": {
+    "read": false,
+    "write": false,
+    "_comment": "仅云函数访问；函数验证记录归属和评论作者。"
+  },
+  "dishes": {
+    "read": false,
+    "write": false,
+    "_comment": "仅云函数访问；函数验证菜品归属。"
+  },
+  "menus": {
+    "read": false,
+    "write": false,
+    "_comment": "仅云函数访问；函数验证本人或情侣关系。"
+  },
+  "menuVotes": {
+    "read": false,
+    "write": false,
+    "_comment": "仅云函数访问；函数验证菜单归属。"
+  },
   "records": {
     "read": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",
     "write": "auth.openid == doc._openid || auth.openid in query.coupleOpenids",

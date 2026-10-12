@@ -5,6 +5,7 @@ cloud.init({
 })
 
 const db = cloud.database()
+const { toDateString } = require('../shared/date')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -58,8 +59,7 @@ exports.main = async (event, context) => {
 
     // 确保日期字段格式正确
     if (record.date) {
-      const date = new Date(record.date.getTime() + record.date.getTimezoneOffset() * 60000 + 8 * 3600000)
-      record.date = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`
+      record.date = toDateString(record.date)
     }
 
     return {

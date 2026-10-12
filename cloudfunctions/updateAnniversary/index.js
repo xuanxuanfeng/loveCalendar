@@ -7,6 +7,7 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 const { validateDate, validateAnniversaryFields } = require('../shared/validators')
+const { writeEditLog } = require('../shared/edit-log')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -73,7 +74,7 @@ exports.main = async (event, context) => {
 
     const updateData = {
       name: name.trim(),
-      date: new Date(`${date}T00:00:00+08:00`),
+      date,
       isCountdownMode: isCountdownMode || false,
       updatedAt: new Date()
     }
@@ -88,9 +89,15 @@ exports.main = async (event, context) => {
       data: updateData
     })
 
+    const userResult = await db.collection('users').where({ _openid: wxContext.OPENID }).get()
+    const user = userResult.data[0] || {}
+    await writeEditLog(db, { recordId: anniversaryId, recordType: 'anniversary', openid: wxContext.OPENID,
+      editorName: (user.profile && user.profile.nickname) || user.nickname,
+      oldData: existingAnniversary.data, newData: { ...updateData, countdownDays: isCountdownMode ? (updateData.countdownDays || []) : [] } })
+
     return {
       success: true,
-      updated: result.stats.updated > 0,
+      updated: (result.stats ? result.stats.updated : result.updated) > 0,
       message: '纪念日更新成功'
     }
   } catch (error) {

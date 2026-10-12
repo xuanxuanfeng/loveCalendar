@@ -25,7 +25,7 @@ exports.main = async (event, context) => {
     if (menu._openid !== wxContext.OPENID) {
       return { success: false, error: '只有发起人可以确定菜单' }
     }
-    if (menu.status === 'decided') {
+    if (menu.status !== 'voting') {
       return { success: false, error: '菜单已确定' }
     }
 
@@ -45,9 +45,11 @@ exports.main = async (event, context) => {
       }
     })
 
-    await db.collection('dishes').where({ _id: dishId }).update({
-      data: { likeCount: _.inc(1) }
-    })
+    if (dishId !== 'random') {
+      await db.collection('dishes').where({ _id: dishId }).update({
+        data: { likeCount: _.inc(1) }
+      })
+    }
 
     return { success: true }
   } catch (error) {

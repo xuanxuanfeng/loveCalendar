@@ -6,6 +6,7 @@ const db = cloud.database()
 const _ = db.command
 const { validateDate } = require('../shared/validators')
 const { MEAL_TYPES } = require('../shared/constants')
+const { getCoupleOpenids } = require('../shared/couple')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -16,13 +17,13 @@ exports.main = async (event, context) => {
   if (!mealType || !MEAL_TYPES.includes(mealType)) {
     return { success: false, error: '餐次类型不合法' }
   }
-  if (!Array.isArray(candidates) || candidates.length < 2 || candidates.length > 10) {
-    return { success: false, error: '候选菜品数量不合法（2-10个）' }
+  if (!Array.isArray(candidates) || candidates.length < 1 || candidates.length > 10) {
+    return { success: false, error: '候选菜品数量不合法（1-10个）' }
   }
 
   const cleanCandidates = []
   for (const c of candidates) {
-    if (!c.dishId || typeof c.dishId !== 'string') {
+    if (!c || !c.dishId || typeof c.dishId !== 'string') {
       return { success: false, error: '候选菜品ID不合法' }
     }
     if (!c.dishName || typeof c.dishName !== 'string' || c.dishName.length > 30) {
@@ -36,7 +37,9 @@ exports.main = async (event, context) => {
   }
 
   try {
+    const openids = await getCoupleOpenids(db, wxContext.OPENID)
     const existing = await db.collection('menus').where({
+      _openid: _.in(openids),
       date,
       mealType,
       status: _.neq('cancelled')

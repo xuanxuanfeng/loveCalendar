@@ -6,11 +6,13 @@ cloud.init({
 
 const db = cloud.database()
 const _ = db.command
-const { validateDate, validateRecordFields } = require('../shared/validators')
+const { validateDate, validateRecordFields, validateRecordMetadata } = require('../shared/validators')
+const { toDateString } = require('../shared/date')
+const { writeEditLog } = require('../shared/edit-log')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const { recordId, date, content, images, changeNote } = event
+  const { recordId, date, content, images, changeNote, title, tags } = event
 
   try {
     if (!recordId || typeof recordId !== 'string') {
@@ -22,6 +24,8 @@ exports.main = async (event, context) => {
 
     const fieldsErr = validateRecordFields(content, images)
     if (fieldsErr) return { success: false, error: fieldsErr }
+    const metadataErr = validateRecordMetadata(title, tags)
+    if (metadataErr) return { success: false, error: metadataErr }
 
     const existingRecord = await db.collection('records').doc(recordId).get()
 
@@ -63,19 +67,29 @@ exports.main = async (event, context) => {
     const oldImages = existingRecord.data.images || []
     const newImages = images || []
     const newVersion = (existingRecord.data.version || 1) + 1
+    const newTitle = title === undefined ? (existingRecord.data.title || '') : title
+    const newTags = tags === undefined ? (existingRecord.data.tags || []) : tags
+
+    // 旧记录第一次编辑时先保存原文，避免版本历史缺少初始内容。
+    if (!existingRecord.data.version) {
+      await db.collection('recordVersions').add({ data: {
+        recordId, version: 1, date: toDateString(existingRecord.data.date),
+        content: existingRecord.data.content || '', images: oldImages,
+        title: existingRecord.data.title || '', tags: existingRecord.data.tags || [],
+        editedBy: existingRecord.data._openid, editorNickname: existingRecord.data.authorNickname || '',
+        editedAt: existingRecord.data.createdAt || now, changeType: 'create', changeNote: ''
+      } })
+    }
+
+    const updateData = {
+      date, content: content ? content.trim() : '', images: newImages,
+      title: newTitle, tags: newTags, lastEditedBy: wxContext.OPENID,
+      lastEditedAt: now, version: newVersion, editCount: _.inc(1), updatedAt: now
+    }
 
     // 更新记录
     await db.collection('records').doc(recordId).update({
-      data: {
-        date: new Date(`${date}T00:00:00+08:00`),
-        content: content ? content.trim() : '',
-        images: newImages,
-        lastEditedBy: wxContext.OPENID,
-        lastEditedAt: now,
-        version: newVersion,
-        editCount: _.inc(1),
-        updatedAt: now
-      }
+      data: updateData
     })
 
     // 创建版本记录
@@ -83,6 +97,9 @@ exports.main = async (event, context) => {
       data: {
         recordId,
         version: newVersion,
+        date,
+        title: newTitle,
+        tags: newTags,
         content: content ? content.trim() : '',
         images: newImages,
         editedBy: wxContext.OPENID,
@@ -93,15 +110,9 @@ exports.main = async (event, context) => {
       }
     })
 
-    // 清理被移除的旧图片
-    const removedImages = oldImages.filter(url => !newImages.includes(url))
-    if (removedImages.length > 0) {
-      try {
-        await cloud.deleteFile({ fileList: removedImages })
-      } catch (e) {
-        console.error('清理旧图片失败:', e)
-      }
-    }
+    // 图片仍被历史版本引用，随整条记录删除时统一清理。
+    await writeEditLog(db, { recordId, recordType: 'record', openid: wxContext.OPENID,
+      editorName: editorNickname, oldData: existingRecord.data, newData: updateData })
 
     return {
       success: true,

@@ -4,6 +4,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
 const _ = db.command
+const { toDateString } = require('../shared/date')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -38,8 +39,7 @@ exports.main = async (event, context) => {
       }).limit(1).get()
       menu = result.data.length > 0 ? result.data[0] : null
     } else {
-      const today = new Date()
-      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+      const todayStr = toDateString(new Date())
       const result = await db.collection('menus').where({
         date: todayStr, _openid: _.in(queryOpenids)
       }).limit(1).get()
@@ -48,6 +48,9 @@ exports.main = async (event, context) => {
 
     if (!menu) {
       return { success: true, data: null }
+    }
+    if (!queryOpenids.includes(menu._openid)) {
+      return { success: false, error: '无权访问此菜单' }
     }
 
     const votesResult = await db.collection('menuVotes').where({ menuId: menu._id }).get()

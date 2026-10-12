@@ -7,6 +7,7 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 const { validateDate } = require('../shared/validators')
+const { toDateString } = require('../shared/date')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -38,7 +39,7 @@ exports.main = async (event, context) => {
     
     const records = await db.collection('records').where({
       _openid: _.in(queryOpenids),
-      date: dateObj
+      date: _.in([date, dateObj])
     }).orderBy('createdAt', 'desc').get()
 
     // 去重（按 _id，防止情侣查询中同一记录出现多次）
@@ -48,7 +49,7 @@ exports.main = async (event, context) => {
     for (const record of records.data) {
       if (!seenIds.has(record._id)) {
         seenIds.add(record._id)
-        uniqueRecords.push(record)
+        uniqueRecords.push({ ...record, date: toDateString(record.date) })
       }
     }
 

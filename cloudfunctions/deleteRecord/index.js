@@ -55,19 +55,32 @@ exports.main = async (event, context) => {
     }
 
     const record = existingRecord.data
+    const images = new Set(record.images || [])
+    let offset = 0
+    while (true) {
+      const versions = await db.collection('recordVersions').where({ recordId }).skip(offset).limit(100).get()
+      for (const version of versions.data) {
+        for (const url of version.images || []) images.add(url)
+      }
+      if (versions.data.length < 100) break
+      offset += versions.data.length
+    }
 
     // 删除记录
     const deleteResult = await db.collection('records').doc(recordId).remove()
+    const removed = deleteResult.stats ? deleteResult.stats.removed : (deleteResult.deleted || deleteResult.removed || 0)
+    if (!removed) return { success: true, deleted: false }
+    await db.collection('recordVersions').where({ recordId }).remove()
+    await db.collection('recordComments').where({ recordId }).remove()
 
     // 如果记录包含图片，删除相关图片
-    if (record.images && record.images.length > 0) {
+    if (images.size > 0) {
       try {
-        await cloud.callFunction({
-          name: 'deleteImages',
-          data: {
-            imageUrls: record.images
-          }
-        })
+        // 已在上方验证记录归属，直接清理，避免删除记录后 deleteImages 无法验证归属。
+        const fileList = [...images].filter(url => typeof url === 'string' && url.startsWith('cloud://'))
+        for (let i = 0; i < fileList.length; i += 50) {
+          await cloud.deleteFile({ fileList: fileList.slice(i, i + 50) })
+        }
       } catch (imageDeleteError) {
         console.error('删除图片失败:', imageDeleteError)
       }
@@ -75,7 +88,7 @@ exports.main = async (event, context) => {
 
     return {
       success: true,
-      deleted: deleteResult.deleted > 0
+      deleted: removed > 0
     }
   } catch (error) {
     return {

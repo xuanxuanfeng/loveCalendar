@@ -33,7 +33,7 @@ exports.main = async (event, context) => {
     const anniversaryData = {
       _openid: wxContext.OPENID,
       name: name.trim(),
-      date: new Date(`${date}T00:00:00+08:00`),
+      date,
       isCountdownMode: isCountdownMode || false,
       createdAt: new Date(),
       updatedAt: new Date()

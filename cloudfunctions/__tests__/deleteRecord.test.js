@@ -92,16 +92,14 @@ describe('deleteRecord', () => {
     expect(result.error).toBe('记录不存在')
   })
 
-  test('删除含图片记录时调用 deleteImages', async () => {
+  test('删除含图片记录时直接清理已验证归属的图片', async () => {
     const { main, mockCloud } = loadDeleteRecord()
     setOpenid(mockCloud, OWNER_OPENID)
     setupExistingRecord(mockCloud, { images: ['cloud://img1.png', 'cloud://img2.png'] })
 
     await main({ recordId: 'existing-record' }, {})
 
-    expect(mockCloud.callFunction).toHaveBeenCalledTimes(1)
-    expect(mockCloud.callFunction.mock.calls[0][0].name).toBe('deleteImages')
-    expect(mockCloud.callFunction.mock.calls[0][0].data.imageUrls).toEqual(['cloud://img1.png', 'cloud://img2.png'])
+    expect(mockCloud.deleteFile).toHaveBeenCalledWith({ fileList: ['cloud://img1.png', 'cloud://img2.png'] })
   })
 
   test('删除无图片记录时不调用 deleteImages', async () => {
@@ -118,7 +116,7 @@ describe('deleteRecord', () => {
     const { main, mockCloud } = loadDeleteRecord()
     setOpenid(mockCloud, OWNER_OPENID)
     setupExistingRecord(mockCloud, { images: ['cloud://img1.png'] })
-    mockCloud.callFunction.mockRejectedValueOnce(new Error('图片删除失败'))
+    mockCloud.deleteFile.mockRejectedValueOnce(new Error('图片删除失败'))
 
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     const result = await main({ recordId: 'existing-record' }, {})

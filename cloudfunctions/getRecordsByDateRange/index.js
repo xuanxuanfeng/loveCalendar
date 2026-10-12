@@ -7,6 +7,7 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 const { validateDate } = require('../shared/validators')
+const { toDateString, dateRangeCondition } = require('../shared/date')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -17,6 +18,7 @@ exports.main = async (event, context) => {
     if (startErr) return { success: false, error: '开始日期格式无效' }
     const endErr = validateDate(endDate)
     if (endErr) return { success: false, error: '结束日期格式无效' }
+    if (startDate > endDate) return { success: false, error: '开始日期不能晚于结束日期' }
 
     // 检查是否有情侣关系（查询 user1Openid 或 user2Openid 包含当前用户的记录）
     const coupleResult = await db.collection('couples').where({
@@ -36,12 +38,9 @@ exports.main = async (event, context) => {
     }
 
     // 查询指定日期范围内的记录
-    const startDateObj = new Date(`${startDate}T00:00:00.000+08:00`)
-    const endDateObj = new Date(`${endDate}T00:00:00.000+08:00`)
-
     const records = await db.collection('records').where({
       _openid: _.in(queryOpenids),
-      date: _.gte(startDateObj).and(_.lte(endDateObj))
+      date: dateRangeCondition(_, startDate, endDate)
     }).orderBy('date', 'desc').get()
 
     // 去重（按 _id，防止情侣查询中同一记录出现多次）
@@ -51,7 +50,7 @@ exports.main = async (event, context) => {
     for (const record of records.data) {
       if (!seenIds.has(record._id)) {
         seenIds.add(record._id)
-        uniqueRecords.push(record)
+        uniqueRecords.push({ ...record, date: toDateString(record.date) })
       }
     }
 

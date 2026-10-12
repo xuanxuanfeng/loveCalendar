@@ -10,6 +10,11 @@ function createCollectionMock() {
   const docCache = {}
 
   const chain = {
+    orderBy: jest.fn(() => chain),
+    skip: jest.fn(() => chain),
+    limit: jest.fn(() => chain),
+    count: jest.fn(() => Promise.resolve({ total: Array.isArray(collectionState.rawData) ? collectionState.rawData.length : 0 })),
+    remove: jest.fn(() => Promise.resolve(collectionState.removeResult || { deleted: 1 })),
     where(query) {
       collectionState.whereData = query
       return chain
@@ -65,6 +70,11 @@ function createCloudMock() {
       command: {
         inc: jest.fn((val) => ({ __inc: val })),
         set: jest.fn((val) => ({ __set: val })),
+        in: jest.fn((val) => ({ __in: val })),
+        neq: jest.fn((val) => ({ __neq: val })),
+        gte: jest.fn((val) => ({ __gte: val, and: other => ({ __gte: val, ...other }) })),
+        lte: jest.fn((val) => ({ __lte: val })),
+        or: jest.fn((val) => ({ __or: val })),
       },
       collection: jest.fn((name) => {
         if (!collections[name]) {

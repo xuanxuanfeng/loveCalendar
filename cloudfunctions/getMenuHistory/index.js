@@ -9,7 +9,7 @@ exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { page = 1, pageSize = 10 } = event
 
-  if (page < 1 || pageSize < 1 || pageSize > 50) {
+  if (!Number.isInteger(page) || !Number.isInteger(pageSize) || page < 1 || pageSize < 1 || pageSize > 50) {
     return { success: false, error: '分页参数不合法' }
   }
 

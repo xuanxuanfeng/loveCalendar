@@ -11,9 +11,17 @@ const {
 } = require('./constants')
 
 function validateDate(date) {
-  if (!date || !DATE_REGEX.test(date)) {
+  if (typeof date !== 'string' || !DATE_REGEX.test(date)) {
     return '日期格式无效，应为 YYYY-MM-DD'
   }
+  const parsed = new Date(`${date}T00:00:00Z`)
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) return '日期无效'
+  return null
+}
+
+function validateRecordMetadata(title, tags) {
+  if (title !== undefined && (typeof title !== 'string' || title.length > MAX_NAME_LENGTH)) return '标题不能超过50字'
+  if (tags !== undefined && (!Array.isArray(tags) || tags.length > 20 || tags.some(tag => typeof tag !== 'string' || tag.length > MAX_NAME_LENGTH))) return '标签格式无效（最多20个，每个不超过50字）'
   return null
 }
 
@@ -98,6 +106,7 @@ function validateCloudUrl(url) {
 module.exports = {
   validateDate,
   validateRecordFields,
+  validateRecordMetadata,
   validateAnniversaryFields,
   validateDishName,
   validateDishCategory,

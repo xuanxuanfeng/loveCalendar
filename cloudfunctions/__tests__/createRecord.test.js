@@ -26,7 +26,7 @@ describe('createRecord', () => {
     const recordsCollection = mockCloud.database().collection('records')
     expect(recordsCollection.add).toHaveBeenCalledTimes(1)
     const addData = recordsCollection.add.mock.calls[0][0].data
-    expect(addData.date).toEqual(new Date('2026-09-06T00:00:00+08:00'))
+    expect(addData.date).toBe('2026-09-06')
     expect(addData.content).toBe('今天的记录')
     expect(addData.images).toEqual(['cloud://img1.png'])
     expect(addData.version).toBe(1)

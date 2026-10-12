@@ -6,6 +6,7 @@ cloud.init({
 
 const db = cloud.database()
 const _ = db.command
+const { toDateString } = require('../shared/date')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -46,10 +47,9 @@ exports.main = async (event, context) => {
 
     // 将日期转换为本地格式字符串
     const anniversaries = uniqueAnniversaries.map(anniversary => {
-      const date = new Date(anniversary.date.getTime() + anniversary.date.getTimezoneOffset() * 60000 + 8 * 3600000)
       return {
         ...anniversary,
-        date: `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`
+        date: toDateString(anniversary.date)
       }
     })
 

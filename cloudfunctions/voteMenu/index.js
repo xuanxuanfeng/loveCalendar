@@ -3,6 +3,7 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
+const { getCoupleOpenids } = require('../shared/couple')
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -23,6 +24,10 @@ exports.main = async (event, context) => {
     const menu = menuResult.data
     if (!menu) {
       return { success: false, error: '菜单不存在' }
+    }
+    const openids = await getCoupleOpenids(db, wxContext.OPENID)
+    if (!openids.includes(menu._openid)) {
+      return { success: false, error: '无权参与此菜单' }
     }
     if (menu.status !== 'voting') {
       return { success: false, error: '投票已结束' }
